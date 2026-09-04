@@ -145,11 +145,15 @@ checkout, from the Shopify&ndash;Meta integration that already exists. What this
 page does is keep the chain unbroken: same domain as checkout, so the `_fbc`
 cookie carries, and the UTMs ride through to the order.
 
-**Do not assume that chain is working.** Across four of Todd's reports there
-are zero attributed purchases, and that predates this page. Before pointing
-spend here, open **Events Manager &rarr; the dataset &rarr; Test Events**, run one
-real purchase end to end, and confirm `Purchase` arrives with a value and a
-currency. If it does not, that is the blocker, and no landing page repairs it.
+**The chain works, but it has been exercised exactly once.** As of 2026-09-04
+the account has **one** attributed purchase: $56.74, 0.35 ROAS, $162.75 cost
+per purchase. So `Purchase` does fire and does attribute &mdash; earlier notes in
+this repo saying otherwise were written against a superseded read.
+
+What that single order does **not** give you is a CAC. One order is a sample of
+one. The real gate is Shopify reconciliation: matching orders back to campaigns
+using the UTMs this page forwards. Until that is run, no cost-per-purchase
+figure from this funnel should be quoted to anyone.
 
 Then confirm the rest in the browser console on the landing page:
 
