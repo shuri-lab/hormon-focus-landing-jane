@@ -354,8 +354,9 @@
 
   <!-- SIGN-OFF -->
   <div style="padding: 0 20px 28px 20px;">
-    <div style="background: #EDE3F7; border-radius: 26px; display: flex; flex-direction: column;">
-      <div style="padding: 30px 26px; display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center;">
+    <div style="background: #EDE3F7; border-radius: 26px; overflow: hidden; display: flex; flex-direction: column;">
+      <img src="img/why-settle.jpg" alt="" style="width: 100%;">
+      <div style="padding: 24px; display: flex; flex-direction: column; gap: 10px;">
         <p style="font-size: 16px; line-height: 1.6; font-weight: 600; color: #2B2A33;">Your hormones deserve a little love &mdash; and so do you.</p>
         <div style="display: flex; flex-direction: column; gap: 1px;">
           <div style="font-size: 14px; color: #4A3A63;">To feeling like yourself again,</div>
@@ -685,8 +686,9 @@
 
   <!-- SIGN-OFF -->
   <div style="padding: 0 88px 48px 88px;">
-    <div style="background: #EDE3F7; border-radius: 30px; display: flex; justify-content: center;">
-      <div style="padding: 48px; display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center;">
+    <div style="background: #EDE3F7; border-radius: 30px; overflow: hidden; display: grid; grid-template-columns: 360px minmax(0,1fr); align-items: center;">
+      <img src="img/why-settle.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+      <div style="padding: 44px 48px; display: flex; flex-direction: column; gap: 14px;">
         <p style="font-size: 20px; line-height: 1.6; font-weight: 600; color: #2B2A33;">Your hormones deserve a little love &mdash; and so do you.</p>
         <div style="display: flex; flex-direction: column; gap: 1px;">
           <div style="font-size: 15px; color: #4A3A63;">To feeling like yourself again,</div>
@@ -711,28 +713,52 @@
 
 <!-- =====================================================================
      TRACKING
-     Inert on the claude.ai preview link: the artifact sandbox blocks
-     connect.facebook.net, so the pixel never loads there. Both halves go
-     live the moment this page is served from shop.jjsmithonline.com.
 
-     1. Parameter forwarding - pure JS, no network call, works anywhere.
-        Carries utm_*, fbclid and ?s= through to the product link so the
-        Shopify order records them. This is what makes Shopify-side
-        reconciliation possible, and it is independent of Meta.
-     2. Meta pixel - PageView, ViewContent, and a click event on the CTA.
-        DATASET_ID is still to be confirmed with Todd: his reports may
-        read a different dataset from the one below.
+     Inert on the claude.ai preview: the artifact sandbox blocks
+     connect.facebook.net. Both halves go live once this page is served
+     from shop.jjsmithonline.com.
+
+     1. ATTRIBUTION - capture, persist, forward. No network call.
+     2. META PIXEL - PageView, ViewContent, BridgeCTAClick.
+
+     UNVERIFIED: whether Meta passes query parameters through on the
+     outbound click under this domain's core setup restrictions. Test it
+     with one live click before trusting the numbers - see README.
      ===================================================================== -->
 <script>
 (function () {
   if (window.__hfTracking) { return; }
   window.__hfTracking = true;
 
-  var DATASET_ID = '1614860232058835';
+  var DATASET_ID = '1614860232058835';   // CONFIRM with Todd which dataset his reports read
   var STORE      = 'shop.jjsmithonline.com';
+  var KEY        = 'hf_attr';
   var PASS       = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content',
                     'utm_term', 'utm_id', 'fbclid', 'gclid', 'ttclid', 's'];
 
+  // ---- 1a. capture, and remember for the whole session -----------------
+  // Persisted so a reader who scrolls, reloads or comes back in the same
+  // tab still carries the campaign through to the store.
+  function attribution() {
+    var q = new URLSearchParams(location.search);
+    var a = {};
+    try { a = JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) {}
+    PASS.forEach(function (k) { var v = q.get(k); if (v) { a[k] = v; } });
+
+    // A paid click with no UTMs on it still has to land somewhere useful
+    // on the Shopify order, so infer the source from the click ID.
+    if (!a.utm_source) {
+      if (a.fbclid)      { a.utm_source = 'facebook'; a.utm_medium = a.utm_medium || 'paid_social'; }
+      else if (a.gclid)  { a.utm_source = 'google';   a.utm_medium = a.utm_medium || 'cpc'; }
+      else if (a.ttclid) { a.utm_source = 'tiktok';   a.utm_medium = a.utm_medium || 'paid_social'; }
+    }
+    try { sessionStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {}
+    return a;
+  }
+
+  var ATTR = attribution();
+
+  // ---- 1b. forward it onto every link that goes to the store -----------
   function storeLinks() {
     return Array.prototype.filter.call(document.querySelectorAll('a[href]'), function (a) {
       try { return new URL(a.href, location.href).hostname.indexOf(STORE) !== -1; }
@@ -740,21 +766,25 @@
     });
   }
 
-  // ---- 1. forward the tracking parameters through to the product link ----
-  try {
-    var incoming = new URLSearchParams(location.search);
-    var carry = new URLSearchParams();
-    PASS.forEach(function (k) { if (incoming.has(k)) { carry.set(k, incoming.get(k)); } });
-    if (carry.toString()) {
-      storeLinks().forEach(function (a) {
-        var u = new URL(a.href, location.href);
-        carry.forEach(function (v, k) { if (!u.searchParams.has(k)) { u.searchParams.set(k, v); } });
-        a.href = u.toString();
-      });
-    }
-  } catch (e) {}
+  function decorate() {
+    var keys = Object.keys(ATTR);
+    if (!keys.length) { return; }
+    storeLinks().forEach(function (a) {
+      var u;
+      try { u = new URL(a.href, location.href); } catch (e) { return; }
+      keys.forEach(function (k) { u.searchParams.set(k, ATTR[k]); });
+      a.href = u.toString();
+    });
+  }
 
-  // ---- 2. Meta pixel ----
+  decorate();
+  // and again at click time, in case anything rewrote the href in between
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (a) { decorate(); }
+  }, true);
+
+  // ---- 2. Meta pixel ---------------------------------------------------
   !function (f, b, e, v, n, t, s) {
     if (f.fbq) return; n = f.fbq = function () {
       n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
@@ -767,10 +797,14 @@
   try {
     fbq('init', DATASET_ID);
     fbq('track', 'PageView');
-    fbq('track', 'ViewContent', { content_name: 'Hormone Focus bridge page' });
+    fbq('track', 'ViewContent', {
+      content_name: 'Hormone Focus bridge page',
+      content_ids: ['hormone-focus'],
+      content_type: 'product'
+    });
     storeLinks().forEach(function (a) {
       a.addEventListener('click', function () {
-        try { fbq('trackCustom', 'BridgeCTAClick'); } catch (e) {}
+        try { fbq('trackCustom', 'BridgeCTAClick', { campaign: ATTR.utm_campaign || '(none)' }); } catch (e) {}
       });
     });
   } catch (e) {}
