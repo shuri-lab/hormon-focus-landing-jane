@@ -61,7 +61,7 @@
     </div>
 
     <p style="font-size: 16px; line-height: 1.55; color: #3A3844;">
-      End the silent suffering. Hormone Focus by JJ Smith is three plant-based ingredients, made to smooth the way through hormonal imbalance, perimenopause and menopause.<span style="font-size: 11px; vertical-align: super;">*</span>
+      End the silent suffering. Hormone Focus by JJ Smith is three plant-based ingredients, made to smooth the way through hormonal imbalance, perimenopause and menopause.
     </p>
 
     <a href="https://shop.jjsmithonline.com/products/hormonal-imbalance" style="display: flex; align-items: center; justify-content: center; gap: 9px; background: #6B3FA0; color: #FFFFFF; border-radius: 14px; padding: 20px 24px; font-size: 18px; font-weight: 700; min-height: 58px; box-sizing: border-box;">
@@ -369,7 +369,7 @@
   <!-- FOOTNOTES -->
   <div style="background: #E7DCF3; padding: 22px 26px 26px 26px; display: flex; flex-direction: column; gap: 9px;">
     <p style="font-size: 11px; line-height: 1.55; color: #5B5769;">General education about a life stage, not medical advice. See your doctor if symptoms are new, severe or worrying.</p>
-    <p style="font-size: 11px; line-height: 1.55; color: #5B5769;"><span style="font-weight: 600;">*</span> &nbsp;These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure or prevent any disease. Ingredient descriptions as published at JJSmithOnline.com.</p>
+    <p style="font-size: 11px; line-height: 1.55; color: #5B5769;">These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure or prevent any disease. Ingredient descriptions as published at JJSmithOnline.com.</p>
     <p style="font-size: 11px; line-height: 1.55; color: #5B5769;">Reviews and photos from verified buyers on JJSmithOnline.com. Individual results vary and are not guaranteed.</p>
     <p style="font-size: 11px; line-height: 1.55; color: #6B6579;">Copyright &copy;2026 By JJ Smith. All Rights Reserved &nbsp;&middot;&nbsp; www.JJSmithOnline.com &nbsp;&middot;&nbsp; @JJSmithOnline.com</p>
   </div>
@@ -409,7 +409,7 @@
       </div>
 
       <p style="font-size: 20px; line-height: 1.55; color: #3A3844; max-width: 640px;">
-        End the silent suffering. Hormone Focus by JJ Smith is three plant-based ingredients, made to smooth the way through hormonal imbalance, perimenopause and menopause.<span style="font-size: 13px; vertical-align: super;">*</span>
+        End the silent suffering. Hormone Focus by JJ Smith is three plant-based ingredients, made to smooth the way through hormonal imbalance, perimenopause and menopause.
       </p>
 
       <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-start;">
@@ -701,7 +701,7 @@
   <!-- FOOTNOTES -->
   <div style="background: #E7DCF3; padding: 28px 88px 32px 88px; display: flex; flex-direction: column; gap: 9px;">
     <p style="font-size: 12px; line-height: 1.55; color: #5B5769; max-width: 920px;">General education about a life stage, not medical advice. See your doctor if symptoms are new, severe or worrying.</p>
-    <p style="font-size: 12px; line-height: 1.55; color: #5B5769; max-width: 920px;"><span style="font-weight: 600;">*</span> &nbsp;These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure or prevent any disease. Ingredient descriptions as published at JJSmithOnline.com.</p>
+    <p style="font-size: 12px; line-height: 1.55; color: #5B5769; max-width: 920px;">These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure or prevent any disease. Ingredient descriptions as published at JJSmithOnline.com.</p>
     <p style="font-size: 12px; line-height: 1.55; color: #5B5769; max-width: 920px;">Reviews and photos from verified buyers on JJSmithOnline.com. Individual results vary and are not guaranteed.</p>
     <p style="font-size: 12px; line-height: 1.55; color: #6B6579;">Copyright &copy;2026 By JJ Smith. All Rights Reserved &nbsp;&middot;&nbsp; www.JJSmithOnline.com &nbsp;&middot;&nbsp; @JJSmithOnline.com</p>
   </div>
@@ -785,18 +785,28 @@
   }, true);
 
   // ---- 2. Meta pixel ---------------------------------------------------
-  !function (f, b, e, v, n, t, s) {
-    if (f.fbq) return; n = f.fbq = function () {
-      n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
-    };
-    if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = [];
-    t = b.createElement(e); t.async = !0; t.src = v;
-    s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
-  }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+  // On the Shopify store the Meta pixel is ALREADY on the page. Installing a
+  // second copy would double every PageView, so only load and init our own
+  // when nothing else has. Either way the events below still fire, once.
+  var HOST_PIXEL = (typeof window.fbq === 'function') ||
+                   !!document.querySelector('script[src*="connect.facebook.net"]');
+
+  if (!HOST_PIXEL) {
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () {
+        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+      };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = [];
+      t = b.createElement(e); t.async = !0; t.src = v;
+      s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+    }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+  }
 
   try {
-    fbq('init', DATASET_ID);
-    fbq('track', 'PageView');
+    if (!HOST_PIXEL) {
+      fbq('init', DATASET_ID);
+      fbq('track', 'PageView');
+    }
     fbq('track', 'ViewContent', {
       content_name: 'Hormone Focus bridge page',
       content_ids: ['hormone-focus'],
