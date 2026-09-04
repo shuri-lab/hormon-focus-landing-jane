@@ -71,12 +71,34 @@ campaign on the Shopify order, and it does not depend on Meta at all.
 `PageView`, `ViewContent` (with `content_ids`), and a `BridgeCTAClick` custom
 event carrying the campaign name. `DATASET_ID` is a named constant at the top.
 
+**It does not install a second pixel.** On the Shopify store the Meta pixel is
+already present store-wide. A second copy would double every `PageView`,
+inflating Landing Page Views and quietly corrupting frequency and cost per LPV.
+The block checks for a host pixel (`window.fbq`, or a `connect.facebook.net`
+script tag) and only loads its own when none is found. `ViewContent` and
+`BridgeCTAClick` fire once either way.
+
+So: drop this page onto the store as-is. Do not add the pixel, and do not
+remove the block to avoid a clash &mdash; it handles the clash itself.
+
 > **Open:** `DATASET_ID` is `1614860232058835`. Todd's reports may read a
 > different dataset. Confirm before this goes live.
 
 Whichever pixel is used has to be on JJ's store as well as on this page. The
 Purchase event only exists on the store, so a pixel that lives only here goes
 blind at the moment that matters.
+
+## Installing it on the store
+
+1. Shopify admin &rarr; **Online Store &rarr; Pages &rarr; Add page**, or a page
+   template if the theme prefers one
+2. Paste `index.html`'s body. Keep the `<style>` block and the tracking block at
+   the foot &mdash; both are self-contained
+3. Upload `img/` to Shopify **Files** and repoint the nine `src` paths, or serve
+   them from the theme's asset folder
+4. Set the ad's destination to the new page URL, and set the URL parameters
+   (below) at ad level
+5. **Verify Purchase before pointing spend at it** &mdash; see the last section
 
 ## The UTM convention
 
@@ -115,6 +137,19 @@ The test costs one click:
 
 If the UTMs are on the URL, the scheme works. If they are stripped, say so
 before anyone builds a report on it.
+
+### Purchase is the one to check first
+
+Purchase does not fire from this page and never will. It fires at Shopify
+checkout, from the Shopify&ndash;Meta integration that already exists. What this
+page does is keep the chain unbroken: same domain as checkout, so the `_fbc`
+cookie carries, and the UTMs ride through to the order.
+
+**Do not assume that chain is working.** Across four of Todd's reports there
+are zero attributed purchases, and that predates this page. Before pointing
+spend here, open **Events Manager &rarr; the dataset &rarr; Test Events**, run one
+real purchase end to end, and confirm `Purchase` arrives with a value and a
+currency. If it does not, that is the blocker, and no landing page repairs it.
 
 Then confirm the rest in the browser console on the landing page:
 
