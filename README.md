@@ -139,6 +139,24 @@ Adding video meant the attribution line under the reviews had to change from
 the footnotes. That is the only wording on the page that is not either JJ's or
 the original bridge copy.
 
+## Analytics
+
+Two tags in the `<head>`, each installed once:
+
+| Tag | ID | Notes |
+|---|---|---|
+| Google Tag Manager | `GTM-WT4MWLTH` | plus the `<noscript>` iframe straight after `<body>` |
+| Microsoft Clarity | `ylyq7ufwhu` | direct install, not via GTM |
+
+**GA4 is not hardcoded.** Measurement ID `G-FJC85W3ZLE` belongs in a GA4
+Configuration tag inside the GTM container; putting a `gtag()` snippet on the
+page as well would double every hit. Same warning for Clarity: it is installed
+directly here, so do not also add a Clarity tag to the container.
+
+The page had no analytics before this &mdash; `git log -S` finds `googletagmanager`,
+`gtag(`, `clarity.ms` and `dataLayer` in none of the twenty commits that precede
+it. Nothing was lost in an earlier push; this is a first install.
+
 ## Tracking
 
 One block at the foot of `index.html`, in two halves. Behaviour below is
@@ -168,8 +186,25 @@ traffic, the block fills in the source from the click ID:
 
 Explicit UTMs always win; the inference only fills gaps.
 
-**Forward.** Every link pointing at `shop.jjsmithonline.com` is rewritten with
-the captured parameters, on load and again at click time.
+**Forward.** Every link pointing at `shop.jjsmithonline.com` is topped up with
+the captured parameters, on load and again at click time &mdash; **gaps only**. The
+three offer links carry fixed UTMs of their own and those survive the click; a
+captured value is written only where the link has none.
+
+| On the link already | Filled from the incoming URL |
+|---|---|
+| `utm_source=bridge` | `utm_term` (ad set) |
+| `utm_medium=landing` | `utm_id` (ad id) |
+| `utm_campaign=hf-60day` | `fbclid`, `gclid`, `ttclid`, `s` |
+| `utm_content=1bottle` / `2bottle` / `sub` | |
+
+> **Consequence, worth understanding before reading any report:** every order
+> from this page now arrives in Shopify as `bridge / landing / hf-60day`,
+> whichever ad paid for the click. Campaign-level reconciliation on the Shopify
+> side is gone; ad-level detail survives only through `utm_id` and `utm_term`,
+> so build reports on those, not on `utm_campaign`. To go back to the incoming
+> campaign winning, drop the `if (!u.searchParams.get(k))` guard in
+> `decorate()`.
 
 ```
 https://shop.jjsmithonline.com/products/hormonal-imbalance

@@ -5,6 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hormone Focus | Feel like you again</title>
 <meta name="description" content="Hormone Focus is JJ Smith's three-ingredient formula, made to support your hormones through this stage.">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WT4MWLTH');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Microsoft Clarity - project ylyq7ufwhu.
+     Installed directly rather than through GTM. If a Clarity tag is ever added
+     to the GTM container as well, remove this block: two installations double
+     every session. -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ylyq7ufwhu");
+</script>
+
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Kaushan+Script&display=swap">
 <style>
@@ -601,6 +621,10 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
 </style>
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WT4MWLTH"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
 <!-- ===== MASTHEAD ===== -->
 <header class="masthead">
@@ -1369,14 +1393,17 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   var HF_OFFERS = {
 
     // Offer 1 - one bottle, 30-day supply, $49.99 one-time, shipping extra
-    single:   'https://shop.jjsmithonline.com/cart/41200079175791:1?storefront=true',
+    single:   'https://shop.jjsmithonline.com/cart/41200079175791:1?storefront=true'
+              + '&utm_source=bridge&utm_medium=landing&utm_campaign=hf-60day&utm_content=1bottle',
 
     // Offer 2 - two bottles, 60-day supply, $84.99 one-time, free shipping
-    bundle:   'https://shop.jjsmithonline.com/cart/54330638663791:1?storefront=true',
+    bundle:   'https://shop.jjsmithonline.com/cart/54330638663791:1?storefront=true'
+              + '&utm_source=bridge&utm_medium=landing&utm_campaign=hf-60day&utm_content=2bottle',
 
     // Offer 3 - the protocol, one bottle a month, $39.99, free shipping.
     // Variant 54355951845487 on selling plan 5529010287.
     protocol: 'https://shop.jjsmithonline.com/cart/add?id=54355951845487&quantity=1&selling_plan=5529010287'
+              + '&utm_source=bridge&utm_medium=landing&utm_campaign=hf-60day&utm_content=sub'
   };
 
   var each = function (sel, fn) {
@@ -1457,13 +1484,20 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
     });
   }
 
+  // Fill gaps only. The offer links carry fixed UTMs of their own
+  // (bridge / landing / hf-60day / which-offer) and those must survive the
+  // click, so a captured value is only written where the link has no value of
+  // its own. utm_term, utm_id and the click IDs are not on the fixed links, so
+  // they still ride through and still identify the ad.
   function decorate() {
     var keys = Object.keys(ATTR);
     if (!keys.length) { return; }
     storeLinks().forEach(function (a) {
       var u;
       try { u = new URL(a.href, location.href); } catch (e) { return; }
-      keys.forEach(function (k) { u.searchParams.set(k, ATTR[k]); });
+      keys.forEach(function (k) {
+        if (!u.searchParams.get(k)) { u.searchParams.set(k, ATTR[k]); }
+      });
       a.href = u.toString();
     });
   }
