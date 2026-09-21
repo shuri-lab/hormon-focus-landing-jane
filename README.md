@@ -1,13 +1,49 @@
 # Hormone Focus &mdash; bridge landing page
 
-One page, responsive. The desktop layout renders at 1100px and above, the mobile
-layout below it (centred, so it reads fine on a tablet). Both are the same copy; they are separate layouts rather than
-one reflowing grid because they were drawn as separate artboards.
+One page, one responsive layout. It used to be two fixed-width artboards, mobile
+and desktop, carrying the same copy twice &mdash; headlines built out of flex rows
+broke as soon as they wrapped. It is now a single document with a fluid type
+scale and alternating colour bands, so a headline is a headline at every width.
 
 ```
 index.html    the page
-img/          9 images, all lifted from JJ's live product page
+img/          21 images. 12 customer selfies and JJ's portrait from the live
+              product page; three background-removed product shots for the
+              offer cards; two customer cut-outs flattened onto white; the
+              60-day money-back badge
+img/partners/ 8 press logos for the marquee, from JJ's coaching page
+img/video/    9 poster frames for the Vimeo testimonials
 ```
+
+Everything under `img/` other than the bottle renders comes from
+`jjsmithonline.com/supplements/hormonal-imbalance/`. The twelve selfies are
+`hormonal-imbalance-selfies-image-v1` to `v12`; the two portraits are the
+`Hormone-Focus-For-the-Women` and `Why-Settle` shots with their green disc
+removed. Product and portrait cut-outs were made with macOS Vision foreground
+segmentation, then flattened onto white and saved as JPEG where they sit on a
+white band &mdash; a transparent PNG of the same shot was five times the weight.
+
+Three things on the page are driven by script rather than markup: the offer
+CTAs' hrefs (see below), the sticky buy bar, and the attribution block. The
+sticky bar is a plain scroll handler &mdash; it shows only where neither the hero
+nor the offer section is on screen, so it never doubles up with a CTA already
+in view.
+
+The customer-photo strip and the press logos live **inside** the hero section,
+not after it. That is deliberate: on a phone the product render is hidden and
+the photo strip runs at full size in its place, directly under the CTA, then
+the chips, the quote, and only then the logos. Reordering those five pieces
+needs them in one flex container, so `.hero-grid` becomes `display: contents`
+below 940px and its two columns join the hero's own flex flow. The photo strip sits above the logos so it is the one that breaks the fold
+&mdash; checked at 1440&times;900 and 1280&times;720.
+
+Review cards carry a circular crop of the verified-buyer selfies already shown
+above them, one per review.
+
+> **Open:** the pairing is arbitrary. Lisa gets `selfie-1`, Angela S. gets
+> `selfie-2`, Arlie L. gets `selfie-3`, because nothing in the source says which
+> photo belongs to which reviewer. Confirm the real pairings, or use photos that
+> are not tied to a name.
 
 No build step and no dependencies. Two Google fonts load from a CDN &mdash; subset
 or self-host them before this carries real traffic.
@@ -24,6 +60,84 @@ convenient, but because everything below depends on it:
 
 Hosting it anywhere else means a new domain to verify, a cross-domain hop, and
 Meta treating the destination as unknown.
+
+## The offer section
+
+Everything above the fold now scrolls rather than sells. Both page CTAs
+(&ldquo;Start today&rdquo;, hero and closer) point at the offer section at the
+foot of the page. The purchase happens there, when the reader picks one of three
+options.
+
+The section id is **`offer`**, and both CTAs are plain `href="#offer"` links, so
+the scroll works with no JavaScript; `html { scroll-behavior: smooth }` makes it
+smooth, and reduced-motion turns it off. `#offer` is also the anchor to use in
+ads.
+
+### Where the cart URLs live
+
+One object, `HF_OFFERS`, in the **offer config** block immediately above the
+tracking block. Nothing else on the page hardcodes a shop URL; both layouts
+read their hrefs from it through `data-offer`.
+
+| Offer | Key | Destination |
+|---|---|---|
+| One bottle, $49.99 one-time, shipping extra | `single` | `/cart/41200079175791:1?storefront=true` |
+| Two bottles, $84.99 one-time, free shipping | `bundle` | `/cart/54330638663791:1?storefront=true` |
+| The protocol, $39.99 a month, free shipping | `protocol` | `/cart/add?id=54355951845487&selling_plan=5529010287` |
+
+Per-day figures on the cards ($1.67, $1.42, $1.33) are price divided by days of
+supply, the same basis for all three, with a bottle counted as the 30 days the
+page states.
+
+The subscription's interval was an open question while the plan did not exist.
+It is settled: selling plan `5529010287` reports itself as **"Deliver every
+month"** at **$39.99** per delivery, so *one bottle a month* and *$1.33 a day*
+are both right.
+
+> **Worth knowing:** the subscription link uses `/cart/add`, which **appends**
+> to the cart, while the two one-time links use the `/cart/<variant>:<qty>`
+> permalink form, which **replaces** it. Verified against the live store: add
+> one bottle, then the subscription, and the cart holds both ($89.98); click
+> subscribe twice and it holds two subscriptions ($129.97). If a shopper should
+> only ever leave with the offer they last clicked, swap `protocol` for
+> `https://shop.jjsmithonline.com/cart/54355951845487:1?selling_plan=5529010287`
+> &mdash; same product, same plan, replace semantics. Left as supplied because
+> letting someone buy a bottle *and* a subscription may well be intended.
+
+All three are live. The pending-state machinery stays in place: leave any of
+these blank and that card renders with its button disabled and a short note in
+its place, so a broken link can never quietly become a dead button.
+
+The config block runs before the tracking block on purpose: attribution
+decorates every link pointing at the store, so the hrefs have to exist by the
+time it runs. Verified in a browser &mdash; land with `?utm_source=&hellip;&fbclid=&hellip;`
+and both live cart links carry the parameters through.
+
+## What came from the product page
+
+Three blocks are lifted from `jjsmithonline.com/supplements/hormonal-imbalance/`
+rather than written here, so they stay in JJ's own words:
+
+- **The FAQ section** &mdash; six of the seven official Q&amp;As, verbatim, in their
+  own section after the guarantee. The seventh (the refund policy) became the
+  guarantee section instead, so the same answer is not told twice. The
+  supplement-facts table was left off; the three-ingredient panel already
+  carries the same milligrams. *Still wondering?* keeps its own four short
+  cards higher up the page and is untouched.
+- **The guarantee section** &mdash; the refund FAQ, verbatim, with the
+  `Money-Back-Badge` seal.
+- **Nine video testimonials** from *What People Are Saying About Hormone
+  Focus*. They are unlisted Vimeo clips, so each card is a poster frame and the
+  player is only injected on click &mdash; the page never pulls nine embeds it may
+  not need. Poster frames were pulled from each clip's player config; Vimeo's
+  oEmbed endpoint 404s on these because they are unlisted. Opening one closes
+  any other, so two clips cannot talk over each other, and the close button
+  puts the poster back so a card can be replayed.
+
+Adding video meant the attribution line under the reviews had to change from
+"Reviews and photos" to "Reviews, photos and videos", in both the section and
+the footnotes. That is the only wording on the page that is not either JJ's or
+the original bridge copy.
 
 ## Tracking
 
@@ -94,8 +208,8 @@ blind at the moment that matters.
    template if the theme prefers one
 2. Paste `index.html`'s body. Keep the `<style>` block and the tracking block at
    the foot &mdash; both are self-contained
-3. Upload `img/` to Shopify **Files** and repoint the nine `src` paths, or serve
-   them from the theme's asset folder
+3. Upload `img/` to Shopify **Files** and repoint the `src` paths, or serve them
+   from the theme's asset folder
 4. Set the ad's destination to the new page URL, and set the URL parameters
    (below) at ad level
 5. **Verify Purchase before pointing spend at it** &mdash; see the last section
