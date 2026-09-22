@@ -96,7 +96,11 @@ body {
 
 a { color: var(--teal); text-decoration: none; }
 p { margin: 0; }
-img { max-width: 100%; display: block; }
+/* height:auto is what makes the width/height attributes a hint rather than a
+   command - without it any image whose CSS leaves height unset renders at the
+   attribute's pixel height and stretches. Every rule below that sets a real
+   height is more specific and still wins. */
+img { max-width: 100%; height: auto; display: block; }
 
 /* ---- layout ------------------------------------------------------------ */
 
