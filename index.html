@@ -25,6 +25,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     })(window, document, "clarity", "script", "ylyq7ufwhu");
 </script>
 
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="shortcut icon" type="image/png" href="img/favicon.png">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Kaushan+Script&display=swap">
 <style>
@@ -213,16 +215,27 @@ img { max-width: 100%; display: block; }
 
 /* ---- header ------------------------------------------------------------ */
 
-.masthead {
-  background: var(--white); border-bottom: 1px solid var(--hair);
-  padding: clamp(14px, 1.6vw, 20px) 0;
+/* announcement bar + header, matching the coaching landing page */
+.announce { background: linear-gradient(90deg, #5B2A80 0%, #7E36A6 48%, #C0468C 100%); color: #FFFFFF; }
+.announce-in {
+  display: flex; align-items: center; justify-content: center; gap: 9px; flex-wrap: wrap;
+  padding: 7px 18px; font-size: 11.5px; font-weight: 800; letter-spacing: .06em;
+  text-transform: uppercase; text-align: center;
 }
-.masthead .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.wordmark { font-size: clamp(14px, 1.5vw, 17px); font-weight: 800; letter-spacing: .26em; color: var(--teal); }
-.masthead .tag {
-  font-size: clamp(9.5px, 1vw, 11.5px); font-weight: 700; letter-spacing: .13em;
-  color: var(--purple-mid); text-align: right;
+.announce-star { color: #F6C9E4; }
+
+.masthead { background: var(--white); border-bottom: 1px solid var(--hair); }
+.masthead-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; }
+.logo { height: 26px; width: auto; }
+.masthead-cta {
+  display: inline-flex; align-items: center; background: var(--grad); color: #FFFFFF;
+  font-family: inherit; font-weight: 800; font-size: 14px; border: 0; border-radius: 12px;
+  padding: 11px 20px; box-shadow: 0 10px 22px -10px rgba(91, 42, 128, .5);
+  transition: transform .15s ease, filter .15s ease;
 }
+.masthead-cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+/* below this the sticky bar carries the CTA, so the header just holds the logo */
+@media (max-width: 560px) { .masthead-cta { display: none; } .masthead-in { justify-content: center; } }
 
 /* ---- hero -------------------------------------------------------------- */
 
@@ -276,6 +289,23 @@ img { max-width: 100%; display: block; }
 
   .hero-aside { margin-top: clamp(16px, 2.6vw, 24px); }
   .press { margin-top: clamp(22px, 3.4vw, 32px); padding-top: clamp(28px, 6vw, 40px); border-top: 1px solid var(--hair); }
+}
+
+/* ---- hero call to action ------------------------------------------------
+   The guarantee line sat 20px under the button and flush against the photo
+   strip's white edge. Pull it up to the button, and push the strip away. */
+.hero-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.hero-cta .btn { padding-inline: clamp(38px, 5.4vw, 78px); }
+.hero-cta .micro { font-weight: 600; }
+.hero-grid { margin-bottom: clamp(20px, 3.2vw, 52px); }
+
+@media (max-width: 940px) {
+  /* stacked, the button fills the column - so centre the line under it, and
+     cap the width so it does not become a banner on a tablet */
+  .hero-cta { align-items: center; }
+  .hero-cta .btn { width: 100%; max-width: 560px; }
+  .hero-cta .micro { text-align: center; }
+  .hero-grid { margin-bottom: 0; }
 }
 
 /* ---- symptom / step / faq lists ---------------------------------------- */
@@ -465,7 +495,7 @@ img { max-width: 100%; display: block; }
 /* On a phone this strip stands in for the hero image, so it runs much larger
    and sits on the hero's own background rather than in the white press band. */
 @media (max-width: 940px) {
-  .photos { background: transparent; border-top: 0; padding: clamp(20px, 3.4vw, 30px) 0 0; }
+  .photos { background: transparent; border-top: 0; padding: clamp(26px, 4.6vw, 36px) 0 0; }
   .photos-track { gap: 12px; animation-duration: 70s; }
   .photos-track img { width: clamp(200px, 58vw, 280px); height: clamp(260px, 76vw, 360px); border-radius: 20px; }
 }
@@ -626,11 +656,19 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
+<!-- ===== ANNOUNCEMENT ===== -->
+<div class="announce">
+  <div class="wrap announce-in">
+    <span class="announce-star" aria-hidden="true">&#10022;</span>
+    <span>60-day money-back guarantee</span>
+  </div>
+</div>
+
 <!-- ===== MASTHEAD ===== -->
 <header class="masthead">
-  <div class="wrap">
-    <div class="wordmark">JJ SMITH</div>
-    <div class="tag">60-DAY MONEY-BACK GUARANTEE</div>
+  <div class="wrap masthead-in">
+    <img src="img/jj-smith-logo.png" alt="JJ Smith" class="logo">
+    <a class="masthead-cta" href="#offer">Start today</a>
   </div>
 </header>
 
@@ -642,10 +680,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="stack hero-copy">
       <div class="badge">
         <span class="avatars">
-          <img src="img/selfie-3.jpg" alt="" loading="lazy">
-          <img src="img/selfie-5.jpg" alt="" loading="lazy">
-          <img src="img/selfie-2.jpg" alt="" loading="lazy">
-          <img src="img/selfie-1.jpg" alt="" loading="lazy">
+          <img src="img/selfie-3.jpg" alt="" loading="lazy" width="300" height="468">
+          <img src="img/selfie-5.jpg" alt="" loading="lazy" width="300" height="468">
+          <img src="img/selfie-2.jpg" alt="" loading="lazy" width="300" height="468">
+          <img src="img/selfie-1.jpg" alt="" loading="lazy" width="300" height="468">
         </span>
         <span class="stars">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="#E8B84B"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z"/></svg>
@@ -664,7 +702,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <p class="body" style="max-width: 58ch;">End the silent suffering. Hormone Focus is a 3-in-1 formula of natural ingredients that support your body through hormonal imbalance and perimenopause changes.</p>
 
-      <div class="stack-s" style="align-items: flex-start;">
+      <div class="hero-cta">
         <a class="btn btn-primary" href="#offer">
           Start today
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13"/><path d="M12 5l7 7-7 7"/></svg>
@@ -675,7 +713,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <div class="stack-s hero-aside">
-      <div class="hero-shot"><img src="img/bottle.jpg" alt="Hormone Focus"></div>
+      <div class="hero-shot"><img src="img/bottle.jpg" alt="Hormone Focus" width="880" height="767"></div>
       <div class="chips">
         <div class="chip"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Two a day</div>
         <div class="chip"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg> No cleanse</div>
@@ -694,30 +732,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="photos">
     <div class="photos-view">
     <div class="photos-track">
-          <img src="img/selfie-1.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-2.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-3.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-4.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-5.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-6.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-7.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-8.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-9.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-10.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-11.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-12.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-1.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-2.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-3.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-4.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-5.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-6.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-7.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-8.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-9.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-10.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-11.jpg" alt="A Hormone Focus customer" loading="lazy">
-          <img src="img/selfie-12.jpg" alt="A Hormone Focus customer" loading="lazy">
+          <img src="img/selfie-1.jpg" alt="A Hormone Focus customer" loading="lazy" width="300" height="468">
+          <img src="img/selfie-2.jpg" alt="A Hormone Focus customer" loading="lazy" width="300" height="468">
+          <img src="img/selfie-3.jpg" alt="A Hormone Focus customer" loading="lazy" width="300" height="468">
+          <img src="img/selfie-4.jpg" alt="A Hormone Focus customer" loading="lazy" width="300" height="468">
+          <img src="img/selfie-5.jpg" alt="A Hormone Focus customer" loading="lazy" width="300" height="468">
+          <img src="img/selfie-6.jpg" alt="A Hormone Focus customer" loading="lazy" width="300" height="468">
+          <img src="img/selfie-7.jpg" alt="A Hormone Focus customer" loading="lazy" width="350" height="546">
+          <img src="img/selfie-8.jpg" alt="A Hormone Focus customer" loading="lazy" width="350" height="546">
+          <img src="img/selfie-9.jpg" alt="A Hormone Focus customer" loading="lazy" width="350" height="546">
+          <img src="img/selfie-10.jpg" alt="A Hormone Focus customer" loading="lazy" width="350" height="546">
+          <img src="img/selfie-11.jpg" alt="A Hormone Focus customer" loading="lazy" width="350" height="546">
+          <img src="img/selfie-12.jpg" alt="A Hormone Focus customer" loading="lazy" width="350" height="546">
+          <img src="img/selfie-1.jpg" alt="A Hormone Focus customer" loading="lazy" width="300" height="468">
+          <img src="img/selfie-2.jpg" alt="A Hormone Focus customer" loading="lazy" width="300" height="468">
+          <img src="img/selfie-3.jpg" alt="A Hormone Focus customer" loading="lazy" width="300" height="468">
+          <img src="img/selfie-4.jpg" alt="A Hormone Focus customer" loading="lazy" width="300" height="468">
+          <img src="img/selfie-5.jpg" alt="A Hormone Focus customer" loading="lazy" width="300" height="468">
+          <img src="img/selfie-6.jpg" alt="A Hormone Focus customer" loading="lazy" width="300" height="468">
+          <img src="img/selfie-7.jpg" alt="A Hormone Focus customer" loading="lazy" width="350" height="546">
+          <img src="img/selfie-8.jpg" alt="A Hormone Focus customer" loading="lazy" width="350" height="546">
+          <img src="img/selfie-9.jpg" alt="A Hormone Focus customer" loading="lazy" width="350" height="546">
+          <img src="img/selfie-10.jpg" alt="A Hormone Focus customer" loading="lazy" width="350" height="546">
+          <img src="img/selfie-11.jpg" alt="A Hormone Focus customer" loading="lazy" width="350" height="546">
+          <img src="img/selfie-12.jpg" alt="A Hormone Focus customer" loading="lazy" width="350" height="546">
     </div>
     </div>
   </div>
@@ -777,7 +815,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       </div>
       </div>
-      <img src="img/woman-problem.jpg" alt="A Hormone Focus customer holding the bottle" loading="lazy">
+      <img src="img/woman-problem.jpg" alt="A Hormone Focus customer holding the bottle" loading="lazy" width="482" height="620">
     </div>
   </div>
 </section>
@@ -846,12 +884,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <div class="grid grid-6" style="gap: clamp(8px, 1.2vw, 14px);">
-      <img src="img/selfie-1.jpg" alt="Customer with Hormone Focus" style="width: 100%; border-radius: 14px;" loading="lazy">
-      <img src="img/selfie-2.jpg" alt="Customer with Hormone Focus" style="width: 100%; border-radius: 14px;" loading="lazy">
-      <img src="img/selfie-3.jpg" alt="Customer with Hormone Focus" style="width: 100%; border-radius: 14px;" loading="lazy">
-      <img src="img/selfie-4.jpg" alt="Customer with Hormone Focus" style="width: 100%; border-radius: 14px;" loading="lazy">
-      <img src="img/selfie-5.jpg" alt="Customer with Hormone Focus" style="width: 100%; border-radius: 14px;" loading="lazy">
-      <img src="img/selfie-6.jpg" alt="Customer with Hormone Focus" style="width: 100%; border-radius: 14px;" loading="lazy">
+      <img src="img/selfie-1.jpg" alt="Customer with Hormone Focus" style="width: 100%; border-radius: 14px;" loading="lazy" width="300" height="468">
+      <img src="img/selfie-2.jpg" alt="Customer with Hormone Focus" style="width: 100%; border-radius: 14px;" loading="lazy" width="300" height="468">
+      <img src="img/selfie-3.jpg" alt="Customer with Hormone Focus" style="width: 100%; border-radius: 14px;" loading="lazy" width="300" height="468">
+      <img src="img/selfie-4.jpg" alt="Customer with Hormone Focus" style="width: 100%; border-radius: 14px;" loading="lazy" width="300" height="468">
+      <img src="img/selfie-5.jpg" alt="Customer with Hormone Focus" style="width: 100%; border-radius: 14px;" loading="lazy" width="300" height="468">
+      <img src="img/selfie-6.jpg" alt="Customer with Hormone Focus" style="width: 100%; border-radius: 14px;" loading="lazy" width="300" height="468">
     </div>
 
     <div class="grid grid-3">
@@ -969,7 +1007,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <h2 class="h2">IT FITS THE LIFE YOU ALREADY HAVE <em>in three</em></h2>
 
     <div class="with-photo is-left">
-      <img src="img/woman-steps.jpg" alt="A Hormone Focus customer holding the bottle" loading="lazy">
+      <img src="img/woman-steps.jpg" alt="A Hormone Focus customer holding the bottle" loading="lazy" width="455" height="620">
       <div class="grid" style="grid-template-columns: 1fr;">
       <div class="card card-soft step">
         <span class="step-n">1</span>
@@ -1123,10 +1161,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="offer-supply">60-day supply</div>
             <div class="offer-price">
               <span class="strike offer-was">$99.98</span>
-              <span class="offer-now">$84.99</span>
+              <span class="offer-now">$79.99</span>
             </div>
-            <div class="offer-day">$1.42 a day</div>
-            <div class="offer-terms">One-time &nbsp;&middot;&nbsp; save $14.99</div>
+            <div class="offer-day">$1.33 a day</div>
+            <div class="offer-terms">One-time &nbsp;&middot;&nbsp; save $19.99</div>
             <div class="ship"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><rect x="2" y="7" width="14" height="10" rx="2"/><path d="M16 10h3l3 3v4h-6z"/><circle cx="6.5" cy="19" r="1.8"/><circle cx="18" cy="19" r="1.8"/></svg> FREE SHIPPING</div>
             </div>
           </div>
@@ -1187,7 +1225,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- ===== GUARANTEE ===== -->
 <section class="band band-teal">
   <div class="wrap guarantee">
-    <img src="img/money-back-badge.png" alt="60-day money-back guarantee" loading="lazy">
+    <img src="img/money-back-badge.png" alt="60-day money-back guarantee" loading="lazy" width="411" height="410">
     <div class="stack-s">
       <p class="eyebrow">Our promise</p>
       <h2 class="h2">60-DAY HAPPINESS <em>guarantee</em></h2>
@@ -1254,7 +1292,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <section class="band band-white">
   <div class="wrap">
     <div class="signoff">
-      <img src="img/jj-lifestyle.jpg" alt="JJ Smith" loading="lazy">
+      <img src="img/jj-lifestyle.jpg" alt="JJ Smith" loading="lazy" width="889" height="1264">
       <div class="stack-s" style="padding: clamp(26px, 3.6vw, 48px);">
         <p class="lead" style="color: var(--ink); font-weight: 600;">Your hormones deserve a little love, and so do you.</p>
         <div>
@@ -1337,6 +1375,99 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 })();
 </script>
 
+<script>
+/* Scrolling to the offer section.
+
+   A plain #offer jump was landing short: everything between the top of the
+   page and the offer section is lazy-loaded, so images were still arriving
+   mid-jump, growing the page under the scroll and leaving the reader a
+   section or two above the target. Images now carry width/height so the space
+   is reserved up front, and this animation re-reads the target every frame and
+   then holds it for a moment, so anything still settling cannot drag the
+   landing spot off. It bails out the instant the reader scrolls themselves. */
+(function () {
+  var target = function () { return document.getElementById('offer'); };
+
+  // CSS sets scroll-behavior:smooth, which also applies to scrollTo(). Left
+  // alone, every frame of the animation below would start its own smooth
+  // scroll and fight the easing - the page crawls and stops short. Each step
+  // has to be explicitly instant; the easing is ours to do.
+  function jump(y) {
+    try { window.scrollTo({ top: y, left: 0, behavior: 'instant' }); }
+    catch (e) { window.scrollTo(0, y); }
+  }
+
+  function topOf(el) {
+    var style = window.getComputedStyle(el);
+    var margin = parseFloat(style.scrollMarginTop) || 0;
+    return Math.max(0, el.getBoundingClientRect().top + window.scrollY - margin);
+  }
+
+  function maxScroll() {
+    return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+  }
+
+  function goTo(el) {
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var raf = window.requestAnimationFrame;
+    if (reduced || typeof raf !== 'function') {
+      // no animation available (or not wanted): land it, then re-land it once
+      // the stragglers have settled
+      jump(Math.min(topOf(el), maxScroll()));
+      var tries = 0;
+      var fix = setInterval(function () {
+        jump(Math.min(topOf(el), maxScroll()));
+        if (++tries > 8) { clearInterval(fix); }
+      }, 90);
+      return;
+    }
+
+    var cancelled = false;
+    var events = ['wheel', 'touchmove', 'keydown'];
+    function cleanup() { events.forEach(function (e) { window.removeEventListener(e, cancel); }); }
+    function cancel() { cancelled = true; cleanup(); }
+    events.forEach(function (e) { window.addEventListener(e, cancel, { passive: true }); });
+
+    var startY = window.scrollY;
+    var t0 = Date.now();
+    var DURATION = 550;
+
+    function ease(t) { return 1 - Math.pow(1 - t, 3); }
+
+    function frame() {
+      if (cancelled) { return; }
+      var t = Math.min(1, (Date.now() - t0) / DURATION);
+      var dest = Math.min(topOf(el), maxScroll());
+      jump(Math.round(startY + (dest - startY) * ease(t)));
+      if (t < 1) { requestAnimationFrame(frame); return; }
+      // hold the target while any straggling image finishes loading
+      var settle0 = Date.now();
+      (function hold() {
+        if (cancelled) { return; }
+        jump(Math.round(Math.min(topOf(el), maxScroll())));
+        if (Date.now() - settle0 < 700) { requestAnimationFrame(hold); } else { cleanup(); }
+      })();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href="#offer"]') : null;
+    if (!a) { return; }
+    var el = target();
+    if (!el) { return; }
+    e.preventDefault();
+    if (window.history && history.pushState) { history.pushState(null, '', '#offer'); }
+    goTo(el);
+  });
+
+  // a visitor arriving on /#offer gets the same treatment
+  if (location.hash === '#offer') {
+    window.addEventListener('load', function () { var el = target(); if (el) { goTo(el); } });
+  }
+})();
+</script>
+
 <!-- ===== STICKY BUY BAR =====
      Hidden while the hero or the offer section is on screen, so it only
      appears in the stretch of page where there is no CTA in view. -->
@@ -1396,7 +1527,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     single:   'https://shop.jjsmithonline.com/cart/41200079175791:1?storefront=true'
               + '&utm_source=bridge&utm_medium=landing&utm_campaign=hf-60day&utm_content=1bottle',
 
-    // Offer 2 - two bottles, 60-day supply, $84.99 one-time, free shipping
+    // Offer 2 - two bottles, 60-day supply, $79.99 one-time, free shipping
     bundle:   'https://shop.jjsmithonline.com/cart/54330638663791:1?storefront=true'
               + '&utm_source=bridge&utm_medium=landing&utm_campaign=hf-60day&utm_content=2bottle',
 
