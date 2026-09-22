@@ -516,6 +516,8 @@ img { max-width: 100%; height: auto; display: block; }
           mask-image: linear-gradient(180deg, #000 80%, transparent 100%);
 }
 .with-photo.is-left img { align-self: center; }
+/* a transparent PNG that carries its own disc - no crop to soften, no corners */
+.with-photo img.disc { border-radius: 0; -webkit-mask-image: none; mask-image: none; }
 @media (max-width: 860px) {
   .with-photo, .with-photo.is-left { grid-template-columns: 1fr; }
   .with-photo img { max-width: 320px; margin-inline: auto; }
@@ -819,7 +821,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       </div>
       </div>
-      <img src="img/woman-problem.jpg" alt="A Hormone Focus customer holding the bottle" loading="lazy" width="482" height="620">
+      <img class="disc" src="img/woman-problem.png" alt="A Hormone Focus customer holding the bottle" loading="lazy" width="666" height="772">
     </div>
   </div>
 </section>
