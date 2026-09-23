@@ -253,6 +253,9 @@ img { max-width: 100%; height: auto; display: block; }
    where the copy reads, and they release below 560px so nothing can overflow. */
 .hero .h1 { font-size: clamp(28px, 3.5vw, 42px); line-height: 1.2; letter-spacing: -.015em; text-wrap: wrap; }
 .hero .h1 .grp { white-space: nowrap; }
+/* the opening line carries the purple; the symptom lines stay ink. The script
+   word keeps the lighter lilac so it still lifts off the line. */
+.hl { color: var(--purple); }
 @media (max-width: 560px) { .hero .h1 .grp { white-space: normal; } }
 /* a marker sweep under the promise, as on the coaching page's sub-headline */
 .mk {
@@ -814,8 +817,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
 
       <div class="stack-s">
-        <h1 class="h1"><span class="grp">Feel Like <em>Yourself</em> Again.</span> <span class="grp">Better Sleep. Better Moods.</span> <span class="grp">Less Stubborn Belly.</span></h1>
-        <p class="lead hero-sub">Hormone Focus combines three natural ingredients to support <mark class="mk">better sleep</mark>, <mark class="mk">calmer moods</mark> and <mark class="mk">fewer night sweats</mark>.</p>
+        <h1 class="h1"><span class="grp"><span class="hl">Feel Like</span> <em>Yourself</em> <span class="hl">Again.</span></span> <span class="grp">Better Sleep.</span> <span class="grp">Calmer Moods.</span> <span class="grp">Fewer Hot Flashes.</span> <span class="grp">Less Stubborn Belly.</span></h1>
+        <p class="lead hero-sub">Three natural ingredients to balance your hormones. <mark class="mk">Two capsules a day.</mark> Feel the difference <mark class="mk">in just 30 days.</mark></p>
       </div>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#offer">
