@@ -1529,18 +1529,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 (function () {
   var HF_OFFERS = {
 
+    // Destinations only. No UTMs are written here: the visitor's own campaign
+    // is the source of truth and the attribution block below forwards it. Which
+    // offer was chosen is not an attribution question - Shopify already records
+    // the variant on the order.
+    //
     // Offer 1 - one bottle, 30-day supply, $49.99 one-time, shipping extra
-    single:   'https://shop.jjsmithonline.com/cart/41200079175791:1?storefront=true'
-              + '&utm_source=bridge&utm_medium=landing&utm_campaign=hf-60day&utm_content=1bottle',
+    single:   'https://shop.jjsmithonline.com/cart/41200079175791:1?storefront=true',
 
     // Offer 2 - two bottles, 60-day supply, $79.99 one-time, free shipping
-    bundle:   'https://shop.jjsmithonline.com/cart/54330638663791:1?storefront=true'
-              + '&utm_source=bridge&utm_medium=landing&utm_campaign=hf-60day&utm_content=2bottle',
+    bundle:   'https://shop.jjsmithonline.com/cart/54330638663791:1?storefront=true',
 
     // Offer 3 - the protocol, one bottle a month, $39.99, free shipping.
     // Variant 54355951845487 on selling plan 5529010287.
     protocol: 'https://shop.jjsmithonline.com/cart/add?id=54355951845487&quantity=1&selling_plan=5529010287'
-              + '&utm_source=bridge&utm_medium=landing&utm_campaign=hf-60day&utm_content=sub'
   };
 
   var each = function (sel, fn) {
@@ -1588,27 +1590,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   var DATASET_ID = '1614860232058835';   // CONFIRM with Todd which dataset his reports read
   var STORE      = 'shop.jjsmithonline.com';
   var KEY        = 'hf_attr';
-  var PASS       = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content',
-                    'utm_term', 'utm_id', 'fbclid', 'gclid', 'ttclid', 's'];
+  var PASS       = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
+                    'fbclid', 'gclid',
+                    // kept from the original block; harmless, and still useful
+                    'utm_id', 'ttclid', 's'];
 
-  // ---- 1a. capture, and remember for the whole session -----------------
-  // Persisted so a reader who scrolls, reloads or comes back in the same
-  // tab still carries the campaign through to the store.
+  // ---- 1a. capture, once, and keep it for the whole session ------------
+  // The first valid value of the session wins. Nothing later overwrites it -
+  // not a reload, not the #offer hash, not any in-page interaction - so the
+  // campaign that actually brought the reader here is the one that reaches
+  // Shopify.
+  //
+  // Nothing is inferred. A bare fbclid used to be turned into
+  // utm_source=facebook / utm_medium=paid_social here; that invented
+  // attribution the visitor never carried, and paid_social is not in the
+  // Hormone Focus vocabulary. The click ID is forwarded on its own instead.
+  function stored() {
+    try { return JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
+  }
+
   function attribution() {
+    var have = stored();
     var q = new URLSearchParams(location.search);
-    var a = {};
-    try { a = JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) {}
-    PASS.forEach(function (k) { var v = q.get(k); if (v) { a[k] = v; } });
-
-    // A paid click with no UTMs on it still has to land somewhere useful
-    // on the Shopify order, so infer the source from the click ID.
-    if (!a.utm_source) {
-      if (a.fbclid)      { a.utm_source = 'facebook'; a.utm_medium = a.utm_medium || 'paid_social'; }
-      else if (a.gclid)  { a.utm_source = 'google';   a.utm_medium = a.utm_medium || 'cpc'; }
-      else if (a.ttclid) { a.utm_source = 'tiktok';   a.utm_medium = a.utm_medium || 'paid_social'; }
-    }
-    try { sessionStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {}
-    return a;
+    var added = false;
+    PASS.forEach(function (k) {
+      var v = q.get(k);
+      if (v && !have[k]) { have[k] = v; added = true; }
+    });
+    if (added) { try { sessionStorage.setItem(KEY, JSON.stringify(have)); } catch (e) {} }
+    return have;
   }
 
   var ATTR = attribution();
@@ -1621,20 +1631,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     });
   }
 
-  // Fill gaps only. The offer links carry fixed UTMs of their own
-  // (bridge / landing / hf-60day / which-offer) and those must survive the
-  // click, so a captured value is only written where the link has no value of
-  // its own. utm_term, utm_id and the click IDs are not on the fixed links, so
-  // they still ride through and still identify the ad.
+  // ---- 1b. forward it onto every link that goes to the store -----------
+  // URL/searchParams does the joining and the encoding, so a destination that
+  // already has a query string gets & and never a second ?.
   function decorate() {
     var keys = Object.keys(ATTR);
-    if (!keys.length) { return; }
+    if (!keys.length) { return; }          // no attribution: append nothing
     storeLinks().forEach(function (a) {
       var u;
       try { u = new URL(a.href, location.href); } catch (e) { return; }
-      keys.forEach(function (k) {
-        if (!u.searchParams.get(k)) { u.searchParams.set(k, ATTR[k]); }
-      });
+      keys.forEach(function (k) { if (ATTR[k]) { u.searchParams.set(k, ATTR[k]); } });
       a.href = u.toString();
     });
   }
