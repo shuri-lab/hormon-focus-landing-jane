@@ -332,6 +332,18 @@ img { max-width: 100%; height: auto; display: block; }
 /* ---- hero call to action ------------------------------------------------
    The guarantee line sat 20px under the button and flush against the photo
    strip's white edge. Pull it up to the button, and push the strip away. */
+/* On a phone the two sweeps crowd each other, so the capsule line drops its
+   highlight and the promise takes the whole sentence instead. Nesting the
+   existing mark inside keeps the sweep unbroken across the space. */
+@media (max-width: 720px) {
+  .mk-caps { background: none; color: inherit; font-weight: inherit; padding: 0; white-space: normal; }
+  .mk-b {
+    background: linear-gradient(180deg, transparent 58%, #DCC8F4 58%);
+    color: var(--purple); padding: 0 .06em; border-radius: 2px; font-weight: 700;
+  }
+  .mk-b .mk { background: none; padding: 0; }
+}
+
 .hero-cta {
   display: flex; flex-direction: column; gap: 10px;
   /* fit-content makes the column exactly as wide as the button, so stretching
@@ -817,8 +829,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
 
       <div class="stack-s">
-        <h1 class="h1"><span class="grp"><span class="hl">Feel Like</span> <em>Yourself</em> <span class="hl">Again.</span></span> <span class="grp">Better Sleep.</span> <span class="grp">Calmer Moods.</span> <span class="grp">Fewer Hot Flashes.</span> <span class="grp">Less Stubborn Belly.</span></h1>
-        <p class="lead hero-sub">Three natural ingredients to balance your hormones. <mark class="mk">Two capsules a day.</mark> Feel the difference <mark class="mk">in just 30 days.</mark></p>
+        <h1 class="h1"><span class="grp"><span class="hl">Feel Like</span> <em>Yourself</em> <span class="hl">Again.</span></span> <span class="grp">Fewer Hot Flashes.</span> <span class="grp">Better Sleep.</span> <span class="grp">Less Stubborn Belly.</span></h1>
+        <p class="lead hero-sub">Three natural ingredients to balance your hormones. <mark class="mk mk-caps">Two capsules a day.</mark> <span class="mk-b">Feel the difference <mark class="mk">in just 30 days.</mark></span></p>
       </div>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#offer">
