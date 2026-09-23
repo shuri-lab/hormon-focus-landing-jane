@@ -656,6 +656,20 @@ img { max-width: 100%; height: auto; display: block; }
   font-weight: 800; letter-spacing: .09em; white-space: nowrap;
 }
 
+/* the written reviews and the screenshot side by side - the screenshot is the
+   one piece of proof nobody can have written for us */
+.proof-split { display: grid; grid-template-columns: minmax(0, 1fr) clamp(320px, 33vw, 450px); gap: clamp(14px, 1.8vw, 22px); align-items: start; }
+@media (max-width: 940px) {
+  .proof-split { grid-template-columns: 1fr; }
+  .fb-desk { display: none; }   /* on a phone it lives in the hero instead */
+}
+
+/* a real Facebook comment, shown as the screenshot it is */
+.fb-shot { margin: 0; background: var(--white); border: 1px solid var(--hair);
+           border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-sm); }
+.fb-shot img { width: 100%; height: auto; display: block; }
+
+
 /* ---- review attribution ------------------------------------------------ */
 .rev-by { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
 .rev-av {
@@ -843,10 +857,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <div class="stack-s hero-aside">
-      <div class="card hero-quote">
-        <p>"Starting to feel like myself again."</p>
-        <div class="rev-by"><img class="rev-av" src="img/selfie-1.jpg" alt="" loading="lazy"><span class="micro">Lisa &nbsp;&middot;&nbsp; verified buyer</span></div>
-      </div>
+      <figure class="hero-quote fb-shot">
+        <img src="img/fb-review.jpg" width="900" height="649" loading="lazy"
+             alt="Facebook comment from Martinez Sullivan: this is a game changer, I have literally shed some inches and lbs, not to mention the hot flashes are gone when I take it">
+      </figure>
     </div>
 
   </div>
@@ -1019,21 +1033,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <img src="img/selfie-6.jpg" alt="Customer with Hormone Focus" style="width: 100%; border-radius: 14px;" loading="lazy" width="300" height="468">
     </div>
 
-    <div class="grid grid-3">
-      <div class="card card-soft">
-        <p class="body" style="color: var(--ink);">"I finally shed this hormonal weight gain! My energy and moods are so much better. Starting to feel like myself again."</p>
-        <div class="rev-by"><img class="rev-av" src="img/selfie-1.jpg" alt="" loading="lazy"><span class="micro">Lisa &nbsp;&middot;&nbsp; verified buyer</span></div>
+    <div class="proof-split">
+      <div class="grid grid-2 reviews">
+        <div class="card card-soft">
+          <p class="body" style="color: var(--ink);">&ldquo;My hot flashes are gone, my period is balance now. If you are experiencing menopause or PCOS then Hormone Focus is for you.&rdquo;</p>
+          <div class="rev-by"><img class="rev-av" src="img/selfie-1.jpg" alt="" loading="lazy" width="300" height="468"><span class="micro">verified buyer &nbsp;&middot;&nbsp; Jun 2025</span></div>
+        </div>
+        <div class="card card-soft">
+          <p class="body" style="color: var(--ink);">&ldquo;I feel normal again! I write this a bit teary eyed. The last few years have been tough... the first night I was able to sleep.&rdquo;</p>
+          <div class="rev-by"><img class="rev-av" src="img/selfie-2.jpg" alt="" loading="lazy" width="300" height="468"><span class="micro">verified buyer &nbsp;&middot;&nbsp; Jul 2025</span></div>
+        </div>
+        <div class="card card-soft">
+          <p class="body" style="color: var(--ink);">&ldquo;By Day 6 or 7, my hot flashes and night sweats were gone! And bye bye bloated stomach! This is the only thing that has worked for me.&rdquo;</p>
+          <div class="rev-by"><img class="rev-av" src="img/selfie-3.jpg" alt="" loading="lazy" width="300" height="468"><span class="micro">verified buyer &nbsp;&middot;&nbsp; Apr 2024</span></div>
+        </div>
+        <div class="card card-soft">
+          <p class="body" style="color: var(--ink);">&ldquo;I&rsquo;m in my mid-40s and these peri-menopausal symptoms are just about gone! Sleep is better, moods better; the scale is moving again, and that makes me so happy!&rdquo;</p>
+          <div class="rev-by"><img class="rev-av" src="img/selfie-4.jpg" alt="" loading="lazy" width="300" height="468"><span class="micro">verified buyer &nbsp;&middot;&nbsp; Apr 2024</span></div>
+        </div>
       </div>
-      <div class="card card-soft">
-        <p class="body" style="color: var(--ink);">"I have only been taking it a few weeks but I have noticed some improvement! I will order again!"</p>
-        <div class="rev-by"><img class="rev-av" src="img/selfie-2.jpg" alt="" loading="lazy"><span class="micro">Angela S. &nbsp;&middot;&nbsp; verified buyer &nbsp;&middot;&nbsp; Jan 2026</span></div>
-      </div>
-      <div class="card card-soft">
-        <p class="body" style="color: var(--ink);">"Has helped me with mood swings."</p>
-        <div class="rev-by"><img class="rev-av" src="img/selfie-3.jpg" alt="" loading="lazy"><span class="micro">Arlie L. &nbsp;&middot;&nbsp; verified buyer &nbsp;&middot;&nbsp; Jan 2026</span></div>
-      </div>
+      <figure class="fb-shot fb-desk">
+        <img src="img/fb-review.jpg" width="900" height="649" loading="lazy" alt="Facebook comment from Martinez Sullivan: this is a game changer, I have literally shed some inches and lbs, not to mention the hot flashes are gone when I take it">
+      </figure>
     </div>
-    
+
     <!-- What people are saying, straight from JJ's product page -->
     <div class="vids">
       <button class="vids-nav vids-prev" type="button" aria-label="Previous videos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
@@ -1078,7 +1101,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <button class="vids-nav vids-next" type="button" aria-label="More videos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
     </div>
 
-    <p class="micro">Reviews, photos and videos from verified buyers on JJSmithOnline.com. Individual results vary.</p>
+    <p class="micro">Reviews, photos and videos from verified buyers on JJSmithOnline.com, and a comment from Facebook. Individual results vary.</p>
 
     <div class="cta-row"><a class="btn btn-primary" href="#offer">Get Hormone Focus <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13"/><path d="M12 5l7 7-7 7"/></svg></a></div>
   </div>
@@ -1451,7 +1474,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="wrap stack-s" style="gap: 10px;">
     <p class="micro" style="max-width: 92ch;">General education about a life stage, not medical advice. See your doctor if symptoms are new, severe or worrying.</p>
     <p class="micro" style="max-width: 92ch;">These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure or prevent any disease. Ingredient descriptions as published at JJSmithOnline.com.</p>
-    <p class="micro" style="max-width: 92ch;">Reviews, photos and videos from verified buyers on JJSmithOnline.com. Individual results vary and are not guaranteed.</p>
+    <p class="micro" style="max-width: 92ch;">Reviews, photos and videos from verified buyers on JJSmithOnline.com, and a comment from Facebook. Individual results vary and are not guaranteed.</p>
     <p class="micro">Copyright &copy;2026 By JJ Smith. All Rights Reserved &nbsp;&middot;&nbsp; www.JJSmithOnline.com &nbsp;&middot;&nbsp; @JJSmithOnline.com</p>
   </div>
 </footer>
