@@ -5,15 +5,38 @@ and desktop, carrying the same copy twice &mdash; headlines built out of flex ro
 broke as soon as they wrapped. It is now a single document with a fluid type
 scale and alternating colour bands, so a headline is a headline at every width.
 
+React 19 on Vite 7, TypeScript, one route. Structured after JJ's coaching
+landing page: the page lives in `src/routes/`, its stylesheet travels with it as
+a template string, and every image is imported so the build hashes it.
+
 ```
-index.html    the page
-img/          21 images. 12 customer selfies and JJ's portrait from the live
-              product page; three background-removed product shots for the
-              offer cards; two customer cut-outs flattened onto white; the
-              60-day money-back badge
-img/partners/ 8 press logos for the marquee, from JJ's coaching page
-img/video/    9 poster frames for the Vimeo testimonials
+index.html             Vite's template - holds the <head>: GTM, Clarity, fonts,
+                       favicon, meta, plus the two <noscript> fallbacks
+src/main.tsx           mounts the route
+src/routes/index.tsx   the page, and the CSS it renders into a <style>
+src/lib/               the five runtime scripts, carried over unchanged
+src/assets/img/        21 images. 12 customer selfies and JJ's portrait from the
+                       live product page; three background-removed product shots
+                       for the offer cards; two customer cut-outs flattened onto
+                       white; the 60-day money-back badge
+src/assets/img/partners/  8 press logos for the marquee, from JJ's coaching page
+src/assets/img/video/     9 poster frames for the Vimeo testimonials
 ```
+
+```
+npm install
+npm run dev       # localhost:8000
+npm run build     # typecheck, then dist/
+npm run preview
+```
+
+The five modules under `src/lib/` &mdash; offers, tracking, videos, scroll, sticky
+&mdash; are the static page's scripts moved across verbatim, each wrapped in a named
+export and nothing inside touched. They carry `@ts-nocheck` for that reason:
+typing them would mean editing them, and attribution and the offer links are the
+last things that should drift during a framework change. The route calls them in
+one effect, in the order the old page ran them, with `applyOffers` before
+`initTracking` because attribution decorates links that must already have hrefs.
 
 Everything under `img/` other than the bottle renders comes from
 `jjsmithonline.com/supplements/hormonal-imbalance/`. The twelve selfies are
@@ -239,15 +262,20 @@ blind at the moment that matters.
 
 ## Installing it on the store
 
-1. Shopify admin &rarr; **Online Store &rarr; Pages &rarr; Add page**, or a page
-   template if the theme prefers one
-2. Paste `index.html`'s body. Keep the `<style>` block and the tracking block at
-   the foot &mdash; both are self-contained
-3. Upload `img/` to Shopify **Files** and repoint the `src` paths, or serve them
-   from the theme's asset folder
-4. Set the ad's destination to the new page URL, and set the URL parameters
-   (below) at ad level
-5. **Verify Purchase before pointing spend at it** &mdash; see the last section
+`npm run build` emits a static `dist/` &mdash; HTML, one JS bundle, one set of
+hashed assets. It needs no server, so any static host will do.
+
+Pasting the markup into a Shopify page no longer works, and that is the one
+thing this conversion cost. The page is now mounted by React at runtime; there
+is no longer a body to copy. Either deploy `dist/` at
+`shop.jjsmithonline.com` on the path the ads point at, or serve it from the
+subdomain and accept the cross-domain hop the original build existed to avoid.
+
+Whichever route is taken:
+
+1. Set the ad's destination to the page URL, and set the URL parameters (below)
+   at ad level
+2. **Verify Purchase before pointing spend at it** &mdash; see the last section
 
 ## The UTM convention
 
