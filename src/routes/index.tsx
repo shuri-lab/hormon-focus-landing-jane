@@ -644,6 +644,13 @@ export default function HormoneFocusLanding() {
                   <span><b>Bonus:</b> Hormone Focus starter guide</span>
                 </div>
 
+                {/* Desktop only (display:none on a phone). The one-bottle card
+                    is the taller of the two now, and all of the protocol card's
+                    slack was piling up in one gap above the bonus box. A second
+                    spacer below it splits that in two, and the head stays at the
+                    top so both cards' titles still land on the same line. */}
+                <div className="offer-fill offer-fill-bottom"></div>
+
                 {/* data-offer makes this a store link like the other CTAs, so
                     tracking.ts decorates it with the visitor's campaign and
                     fires BridgeCTAClick on it. See the PRICE MISMATCH note in
@@ -1382,7 +1389,9 @@ img { max-width: 100%; height: auto; display: block; }
   .offer > .btn { margin-top: 14px; }
   .offer-bonus { margin-top: 14px; margin-bottom: 0; padding: 7px 10px; }
   .offer-bonus img { height: 30px; }
-  .offer-bonus + .btn { margin-top: 10px; }
+  /* the desktop spacer sits between them in the markup, so match both */
+  .offer-bonus + .btn,
+  .offer-bonus + .offer-fill + .btn { margin-top: 10px; }
   .offer-guarantee { margin-top: 9px; }
   .or { margin: 2px; }
 }
@@ -1638,7 +1647,9 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
    the border, the tint and the badge rather than from size. */
 .offer-lead { border-width: 2.5px; box-shadow: 0 30px 64px -42px rgba(107, 63, 160, .65); }
 .offer-lead .offer-now { font-size: clamp(46px, 5.4vw, 62px); }
-.offer-quiet { background: var(--white); }
+/* Same 1px lilac edge at every width: the mobile block used to set this on
+   its own, and the two had drifted apart on desktop. */
+.offer-quiet { background: var(--white); border-width: 1px; border-color: var(--lilac); box-shadow: none; }
 
 /* Both cards lead with the same pair: one bold title, one muted subtitle.
    The eyebrow kickers are gone, so the title is the first thing under the
@@ -1681,10 +1692,10 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
 .opt-name { flex: 1; min-width: 0; }
 .opt-title {
   display: flex; align-items: center; flex-wrap: wrap; gap: 7px;
-  font-size: clamp(14px, 1.15vw, 15px); font-weight: 800; color: var(--ink);
+  font-size: clamp(15px, 1.3vw, 17px); font-weight: 800; color: var(--ink);
   line-height: 1.2; letter-spacing: -.015em;
 }
-.opt-cadence { font-size: var(--micro); font-weight: 600; color: var(--muted); margin-top: 3px; }
+.opt-cadence { font-size: clamp(13px, 1.1vw, 14.5px); font-weight: 600; color: var(--muted); margin-top: 3px; }
 
 .opt-pill {
   display: inline-flex; align-items: center; border: 1.5px solid var(--lilac);
@@ -1693,10 +1704,12 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
 }
 
 .opt-cost { flex: 0 0 auto; text-align: right; }
-.opt-figures { display: flex; align-items: baseline; justify-content: flex-end; gap: 7px; white-space: nowrap; }
-.opt-price { font-size: clamp(17px, 1.8vw, 19.5px); font-weight: 800; letter-spacing: -.025em; color: var(--purple); }
-.opt-was { font-size: clamp(12.5px, 1.3vw, 14px); font-weight: 700; color: var(--muted); }
-.opt-per { font-size: var(--micro); font-weight: 700; color: var(--muted); margin-top: 3px; }
+/* Stacked, not side by side. At 28px the live price plus a struck one would
+   take the width the 17px label needs to keep "20% OFF" on its line. */
+.opt-figures { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; white-space: nowrap; }
+.opt-price { font-size: clamp(22px, 2.3vw, 28px); font-weight: 800; letter-spacing: -.025em; color: var(--purple); }
+.opt-was { font-size: clamp(13.5px, 1.25vw, 15px); font-weight: 700; color: var(--muted); }
+.opt-per { font-size: clamp(13px, 1.1vw, 14.5px); font-weight: 700; color: var(--muted); margin-top: 3px; }
 
 /* Always on, selected or not, so the subscription's terms are readable
    without committing to it first. Teal survives here and only here: the
@@ -1706,7 +1719,7 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   margin-top: 11px; padding-top: 11px; border-top: 1.5px solid var(--hair);
 }
 .opt-extra .ship { margin-top: 0; }
-.opt-note { font-size: var(--micro); font-weight: 600; color: var(--muted); }
+.opt-note { font-size: clamp(13px, 1.1vw, 14.5px); font-weight: 600; color: var(--muted); }
 
 /* the button sits under the rows, and carries the selected price */
 .offer-quiet .opts + .btn { margin-top: 14px; }
@@ -1740,7 +1753,13 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
      the same line and the cards can be read across; the slack in the shorter
      one falls into .offer-fill below the head, which keeps both buttons on
      the same line too. */
-  .offer-quiet .offer-head { padding-bottom: clamp(14px, 1.6vw, 20px); }
+  /* Tightened from ~20px: the larger option text has to come from somewhere,
+     and this gap is the slack in the card rather than the section. */
+  .offer-quiet .offer-head { padding-bottom: 12px; }
+  .offer-quiet .offer-fill { min-height: 0; }
+  .offer-fill-bottom { min-height: 0; }
+  /* the bonus box brings its own 14px, so the spacer starts from zero */
+  .offer-lead .offer-bonus { margin-bottom: 0; }
 }
 
 /* Small laptops: the pair is still side by side but each card is narrow, and
@@ -1750,16 +1769,12 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   .opt { padding: 12px 11px; }
   .opt-on { padding: 11.5px 10.5px; }
   .opt-top { gap: 9px; }
-  .opt-title { font-size: 13.5px; }
   .opt-pill { font-size: 9px; padding: 2px 5px; letter-spacing: .03em; }
-  .opt-price { font-size: 17px; }
-  .opt-was { font-size: 12.5px; }
 }
 
 /* the last stretch before the cards stack, where the columns are narrowest */
 @media (min-width: 901px) and (max-width: 959px) {
   .offer { padding-inline: 16px; }
-  .opt-title { font-size: 13px; }
 }
 
 @media (max-width: 900px) {
@@ -1781,8 +1796,6 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
      mirrors the protocol card here: same 1px light-purple edge, same header
      geometry, same type scale. It stays the quieter of the two through the
      thinner border and the absence of a badge, tint and shadow. */
-  .offer-quiet { border-width: 1px; border-color: var(--lilac); box-shadow: none; }
-
   /* Equal image columns and an equal gap on both cards, so the two titles
      start at the same x when the cards are stacked. */
   .offer-lead .offer-head,
@@ -1810,10 +1823,6 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   /* At 17px the label fills the row on its own, so the badge takes the next
      line instead of squeezing the label onto two. */
   .opt-label { flex: 0 0 100%; }
-
-  /* The struck price stacks under the live one: side by side they would push
-     the label column below what a 17px heading needs. */
-  .opt-figures { flex-direction: column; align-items: flex-end; gap: 1px; }
 
   /* Benefits line up with the label text, not the radio, and the rule above
      them starts there too. */
