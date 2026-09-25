@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { initVideos } from "@/lib/videos";
 import { initOfferScroll } from "@/lib/scroll";
 import { initStickyBar } from "@/lib/sticky";
 import { applyOffers } from "@/lib/offers";
 import { initTracking } from "@/lib/tracking";
+import { HF_OFFERS, PROTOCOL_CHECKOUT_HREF } from "@/lib/offer-urls";
 
 import imgFbReview from "@/assets/img/fb-review.jpg";
 import imgHeroBottle from "@/assets/img/hero-bottle.png";
@@ -53,7 +54,68 @@ import imgWomanSteps from "@/assets/img/woman-steps.jpg";
 // itself with window.__hfTracking; this does the same for the rest.
 let wired = false;
 
+// The one-bottle card's two options, and everything that changes with them:
+// the copy, the figures, the button, and which Shopify destination it points
+// at. Order is the DOM order, the tab order and the arrow-key order, so this
+// is the single place that decides which option comes first.
+const PLANS = [
+  {
+    id: "once",
+    offer: "single",
+    title: "One-time purchase",
+    cadence: "Delivered once",
+    price: "$49.99",
+    was: null,
+    per: "$1.67 a day",
+    pill: null,
+    benefits: false,
+    cta: "Get 1 bottle",
+  },
+  {
+    id: "sub",
+    offer: "protocol",
+    title: "Subscribe & save",
+    cadence: "Delivered every 30 days",
+    price: "$39.99",
+    was: "$49.99",
+    // deliberately no per-day figure on the subscription
+    per: null,
+    pill: "20% OFF",
+    // shown whether or not the option is selected, so the two cards read the
+    // same at a glance
+    benefits: true,
+    cta: "Subscribe & save",
+  },
+] as const;
+
+type PlanId = (typeof PLANS)[number]["id"];
+
 export default function HormoneFocusLanding() {
+  const [plan, setPlan] = useState<PlanId>("once");
+  const optRefs = useRef<Array<HTMLDivElement | null>>([]);
+
+  const active = PLANS.find((p) => p.id === plan)!;
+
+  // Which Shopify destination the one-bottle button currently points at. Read
+  // straight from the shared table so the rendered href and applyOffers() can
+  // never disagree; tracking.ts adds the visitor's UTMs on top, at click time.
+  const activeOffer = { key: active.offer, url: HF_OFFERS[active.offer] };
+
+  // Radiogroup keyboard contract: arrows move AND select, wrapping at the ends.
+  // Enter and Space are handled on the rows themselves - they are divs, not
+  // buttons, because the selected row expands to hold a list and a list is not
+  // valid content inside a button.
+  const onOptKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const back = e.key === "ArrowLeft" || e.key === "ArrowUp";
+    const fwd = e.key === "ArrowRight" || e.key === "ArrowDown";
+    if (!back && !fwd) return;
+    e.preventDefault();
+    const i = PLANS.findIndex((x) => x.id === plan);
+    const next = (i + (fwd ? 1 : -1) + PLANS.length) % PLANS.length;
+    setPlan(PLANS[next].id);
+    optRefs.current[next]?.focus();
+  };
+
   useEffect(() => {
     if (wired) return;
     wired = true;
@@ -109,7 +171,7 @@ export default function HormoneFocusLanding() {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="#E8B84B"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
               </span>
               <b>4.9</b>
-              <span className="badge-t">from 4,629 verified reviews</span>
+              <span className="badge-t">from 172 verified reviews</span>
             </div>
 
             <div className="stack-s">
@@ -286,7 +348,7 @@ export default function HormoneFocusLanding() {
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="#E8B84B"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
               </span>
               <b>4.9</b>
-              <span className="small">from 169 verified reviews</span>
+              <span className="small">from 172 verified reviews</span>
             </div>
           </div>
 
@@ -527,7 +589,7 @@ export default function HormoneFocusLanding() {
                 <svg width="19" height="19" viewBox="0 0 24 24" fill="#F3CE73"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
               </span>
               <b style={{ color: "#FFFFFF" }}>4.9</b>
-              <span className="micro">from 169 verified reviews</span>
+              <span className="micro">from 172 verified reviews</span>
             </div>
             <a className="btn btn-light" href="#offer" style={{ borderRadius: "999px" }}>
               Get Hormone Focus
@@ -545,42 +607,16 @@ export default function HormoneFocusLanding() {
 
           <div className="stack-s" style={{ alignItems: "center", textAlign: "center" }}>
             <p className="eyebrow">Get started</p>
-            <h2 className="h2" style={{ color: "var(--ink)" }}>Your reset starts at <span style={{ color: "var(--purple)" }}>$1.33 a day</span></h2>
-            <p className="body" style={{ maxWidth: "42ch" }}>Less than a coffee. Same formula in all three &mdash; pick the one that fits.</p>
+            <h2 className="h2" style={{ color: "var(--ink)" }}>Feel like yourself again for just <span style={{ color: "var(--purple)" }}>$1.25 a day</span>.</h2>
+            <p className="body" style={{ maxWidth: "42ch" }}>Less than a coffee. Two capsules a day.</p>
           </div>
 
-          <div className="offers">
+          <div className="offers offers-pair">
 
-            {/* OFFER 1 - SINGLE BOTTLE */}
-            <div className="offer-col">
-              <div className="offer">
-                <div className="offer-head">
-                  <div className="offer-shots"><img src={imgOffer1Bottle} alt="Hormone Focus, one bottle" /></div>
-                  <div className="offer-main">
-                  <div className="offer-kicker">1 BOTTLE</div>
-                  <div className="offer-supply">30-day supply</div>
-                  <div className="offer-price"><span className="offer-now">$49.99</span></div>
-                  <div className="offer-day">$1.67 a day</div>
-                  <div className="offer-terms">One-time &nbsp;&middot;&nbsp; shipping charged separately</div>
-                  </div>
-                </div>
-                <div className="offer-fill"></div>
-                <a className="btn btn-ghost btn-full" data-offer="single">
-                  Get 1 bottle
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h13" /><path d="M12 5l7 7-7 7" /></svg>
-                </a>
-              </div>
-              <div className="offer-guarantee">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#276F6C" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: "0" }}><path d="M12 3l7 3v6c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6l7-3z" /><path d="M9 12l2 2 4-4" /></svg>
-                <span>60-day money-back guarantee</span>
-              </div>
-            </div>
-
-            <div className="or"><span>OR</span></div>
-
-            {/* OFFER 2 - TWO-BOTTLE BUNDLE (BESTSELLER) */}
-            <div className="offer-col">
-              <div className="offer offer-best">
+            {/* CARD 1 - THE PROTOCOL. First in the DOM so it leads on a phone;
+                CSS order puts it on the right on desktop. */}
+            <div className="offer-col col-protocol">
+              <div className="offer offer-best offer-lead">
                 <div className="offer-badge">BESTSELLER</div>
                 <div className="offer-head">
                   <div className="offer-shots">
@@ -588,68 +624,131 @@ export default function HormoneFocusLanding() {
                     <img className="shot-guide" src={imgOfferStarterGuide} alt="Hormone Focus starter guide" />
                   </div>
                   <div className="offer-main">
-                  <div className="offer-kicker">2 BOTTLES</div>
-                  <div className="offer-supply">60-day supply</div>
-                  <div className="offer-price">
-                    <span className="strike offer-was">$99.98</span>
-                    <span className="offer-now">$79.99</span>
-                  </div>
-                  <div className="offer-day">$1.33 a day</div>
-                  <div className="offer-terms">One-time &nbsp;&middot;&nbsp; save $19.99</div>
-                  <div className="ship"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: "0" }}><rect x="2" y="7" width="14" height="10" rx="2" /><path d="M16 10h3l3 3v4h-6z" /><circle cx="6.5" cy="19" r="1.8" /><circle cx="18" cy="19" r="1.8" /></svg> FREE SHIPPING</div>
+                    {/* PLACEHOLDER NAME - JJ is still finalising this. Swap the
+                        string below once the real protocol name is signed off. */}
+                    <div className="offer-name">60-Day Protocol</div>
+                    <div className="offer-supply">2 bottles</div>
+                    <div className="offer-price">
+                      <span className="strike offer-was">$99.98</span>
+                      <span className="offer-now">$74.99</span>
+                    </div>
+                    <div className="offer-day">$1.25 a day</div>
+                    <div className="ship"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: "0" }}><rect x="2" y="7" width="14" height="10" rx="2" /><path d="M16 10h3l3 3v4h-6z" /><circle cx="6.5" cy="19" r="1.8" /><circle cx="18" cy="19" r="1.8" /></svg> FREE SHIPPING</div>
                   </div>
                 </div>
+
                 <div className="offer-fill"></div>
+
                 <div className="offer-bonus">
                   <img src={imgOfferStarterGuide} alt="" />
                   <span><b>Bonus:</b> Hormone Focus starter guide</span>
                 </div>
-                <a className="btn btn-primary btn-full" data-offer="bundle">
-                  Get 2 bottles
+
+                {/* data-offer makes this a store link like the other CTAs, so
+                    tracking.ts decorates it with the visitor's campaign and
+                    fires BridgeCTAClick on it. See the PRICE MISMATCH note in
+                    lib/offer-urls.ts: the store is still $79.99 pending a
+                    reprice to $74.99. */}
+                <a className="btn btn-primary btn-full" data-offer="bundle" href={PROTOCOL_CHECKOUT_HREF}>
+                  Start the 60-day protocol
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h13" /><path d="M12 5l7 7-7 7" /></svg>
                 </a>
-              </div>
-              <div className="offer-guarantee">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#276F6C" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: "0" }}><path d="M12 3l7 3v6c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6l7-3z" /><path d="M9 12l2 2 4-4" /></svg>
-                <span>60-day money-back guarantee</span>
               </div>
             </div>
 
             <div className="or"><span>OR</span></div>
 
-            {/* OFFER 3 - PROTOCOL SUBSCRIPTION */}
-            <div className="offer-col">
-              <div className="offer offer-sub">
+            {/* CARD 2 - ONE BOTTLE. Quieter, and the only card that carries a
+                choice. CSS order puts it on the left on desktop. */}
+            <div className="offer-col col-bottle">
+              <div className="offer offer-quiet">
+
                 <div className="offer-head">
-                  <div className="offer-shots"><img src={imgOffer1Bottle} alt="Hormone Focus, one bottle a month" /></div>
+                  <div className="offer-shots"><img src={imgOffer1Bottle} alt="Hormone Focus, one bottle" /></div>
                   <div className="offer-main">
-                  <div className="offer-kicker">SUBSCRIBE &amp; SAVE</div>
-                  <div className="offer-supply">One bottle a month</div>
-                  <div className="offer-price">
-                    <span className="strike offer-was">$49.99</span>
-                    <span className="offer-now">$39.99</span>
-                  </div>
-                  <div className="offer-day">$1.33 a day</div>
-                  <div className="offer-terms">Cancel any time</div>
-                  <div className="ship"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: "0" }}><rect x="2" y="7" width="14" height="10" rx="2" /><path d="M16 10h3l3 3v4h-6z" /><circle cx="6.5" cy="19" r="1.8" /><circle cx="18" cy="19" r="1.8" /></svg> FREE SHIPPING</div>
+                    <div className="offer-name">30-Day Supply</div>
+                    <div className="offer-supply">1 bottle</div>
                   </div>
                 </div>
+
                 <div className="offer-fill"></div>
-                <a className="btn btn-teal btn-full" data-offer="protocol">
-                  Subscribe &amp; save
+
+                <div className="opts" role="radiogroup" aria-label="How to buy one bottle" onKeyDown={onOptKeyDown}>
+                  {PLANS.map((p, i) => {
+                    const on = plan === p.id;
+                    return (
+                      <div
+                        key={p.id}
+                        role="radio"
+                        aria-checked={on}
+                        tabIndex={on ? 0 : -1}
+                        ref={(el) => { optRefs.current[i] = el; }}
+                        className={"opt" + (on ? " opt-on" : "") + (p.id === "sub" ? " opt-sub" : "")}
+                        onClick={() => setPlan(p.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === " " || e.key === "Enter") { e.preventDefault(); setPlan(p.id); }
+                        }}
+                      >
+                        <div className="opt-top">
+                          <span className="opt-dot" aria-hidden="true"></span>
+                          <div className="opt-name">
+                            <div className="opt-title">
+                              <span className="opt-label">{p.title}</span>
+                              {p.pill ? <span className="opt-pill">{p.pill}</span> : null}
+                            </div>
+                            <div className="opt-cadence">{p.cadence}</div>
+                          </div>
+                          <div className="opt-cost">
+                            <div className="opt-figures">
+                              <span className="opt-price">{p.price}</span>
+                              {p.was ? <span className="strike opt-was">{p.was}</span> : null}
+                            </div>
+                            {p.per ? <div className="opt-per">{p.per}</div> : null}
+                          </div>
+                        </div>
+                        {p.benefits ? (
+                          <div className="opt-extra">
+                            <span className="ship"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: "0" }}><rect x="2" y="7" width="14" height="10" rx="2" /><path d="M16 10h3l3 3v4h-6z" /><circle cx="6.5" cy="19" r="1.8" /><circle cx="18" cy="19" r="1.8" /></svg> FREE SHIPPING</span>
+                            <span className="opt-note">Pause or cancel anytime</span>
+                          </div>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* One anchor, not two: React keeps the same DOM node across the
+                    selection, so the click listeners tracking.ts attached at load
+                    (Meta BridgeCTAClick, and the re-decorate that re-applies the
+                    visitor's UTMs) survive switching option. */}
+                <a
+                  className={"btn btn-full btn-ghost" + (activeOffer.url ? "" : " hf-pending")}
+                  data-offer={activeOffer.key}
+                  href={activeOffer.url || undefined}
+                  aria-disabled={activeOffer.url ? undefined : true}
+                >
+                  {active.cta}&nbsp;&middot;&nbsp;{active.price}
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h13" /><path d="M12 5l7 7-7 7" /></svg>
                 </a>
-                <p className="micro" data-offer-note="protocol" style={{ display: "none", marginTop: "10px" }}>Subscription checkout opens shortly &mdash; the one-time options are ready now.</p>
-              </div>
-              <div className="offer-guarantee">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#276F6C" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: "0" }}><path d="M12 3l7 3v6c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6l7-3z" /><path d="M9 12l2 2 4-4" /></svg>
-                <span>60-day money-back guarantee</span>
+                <p className="micro" data-offer-note="protocol" style={{ display: HF_OFFERS.protocol ? "none" : "block", marginTop: "10px" }}>Subscription checkout opens shortly. The one-time options are ready now.</p>
               </div>
             </div>
 
           </div>
 
-          <p className="micro" style={{ textAlign: "center" }}>In stock &nbsp;&middot;&nbsp; ships today</p>
+          {/* One trust row for the pair: the guarantee and the stock promise
+              carry the same weight instead of one being a heading and the
+              other a grey footnote. */}
+          <div className="trust">
+            <span className="trust-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6l7-3z" /><path d="M9 12l2 2 4-4" /></svg>
+              60-day money-back guarantee
+            </span>
+            <span className="trust-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="2" y="7" width="14" height="10" rx="2" /><path d="M16 10h3l3 3v4h-6z" /><circle cx="6.5" cy="19" r="1.8" /><circle cx="18" cy="19" r="1.8" /></svg>
+              In stock, ships today
+            </span>
+          </div>
         </div>
       </section>
 
@@ -1519,4 +1618,211 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
 
 /* an offer whose destination is not configured yet */
 .hf-pending { opacity: .45; pointer-events: none; }
+
+/* ---- offer section, two-card layout ------------------------------------ */
+/* Everything above still applies: this only adds the parts the pair needs.
+   Base rules first, media queries last, so the phone layout keeps winning. */
+
+.offers-pair {
+  /* the protocol takes the wider column - roughly 45/55 */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.18fr);
+  gap: clamp(18px, 2.2vw, 30px);
+  /* width:100% matters - the auto inline margins that centre the pair also
+     cancel the stretch it would otherwise get from .stack, which left the
+     grid shrink-to-fit and the cards narrower than the max-width implies. */
+  width: 100%; max-width: 1020px; margin-inline: auto; align-items: stretch;
+}
+
+/* the lead card: same bestseller treatment, turned up. Wider column, heavier
+   border, bigger price. Same height as its neighbour, so the weight comes from
+   the border, the tint and the badge rather than from size. */
+.offer-lead { border-width: 2.5px; box-shadow: 0 30px 64px -42px rgba(107, 63, 160, .65); }
+.offer-lead .offer-now { font-size: clamp(46px, 5.4vw, 62px); }
+.offer-quiet { background: var(--white); }
+
+/* Both cards lead with the same pair: one bold title, one muted subtitle.
+   The eyebrow kickers are gone, so the title is the first thing under the
+   shot and carries no top margin. */
+.offer-name {
+  font-size: clamp(19px, 2.1vw, 23px); font-weight: 800; color: var(--ink);
+  line-height: 1.2; letter-spacing: -.02em; margin-top: 0; text-wrap: balance;
+}
+.offer-quiet .offer-supply,
+.offer-lead .offer-supply { font-size: clamp(14px, 1.45vw, 15.5px); margin-top: 5px; }
+
+/* ---- the one-bottle card's two selectable rows ------------------------- */
+
+.opts { width: 100%; display: grid; gap: 10px; text-align: left; }
+
+.opt {
+  position: relative; width: 100%; cursor: pointer;
+  background: var(--white); border: 1.5px solid var(--hair); border-radius: 15px;
+  padding: 13px 15px; min-height: 44px;
+  transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
+}
+.opt:hover { border-color: var(--lilac); }
+.opt-on {
+  border-width: 2px; border-color: var(--purple); background: var(--lav);
+  padding: 12.5px 14.5px;   /* hold the box steady as the border thickens */
+  box-shadow: var(--shadow-sm);
+}
+.opt:focus-visible { outline: 3px solid var(--purple-mid); outline-offset: 2px; }
+
+.opt-top { display: flex; align-items: center; gap: 10px; }
+
+.opt-dot {
+  flex: 0 0 auto; width: 21px; height: 21px; border-radius: 50%;
+  border: 2px solid #C9BBDF; background: var(--white); position: relative;
+  transition: border-color .16s ease;
+}
+.opt-on .opt-dot { border-color: var(--purple); }
+.opt-on .opt-dot::after { content: ""; position: absolute; inset: 3.5px; border-radius: 50%; background: var(--purple); }
+
+.opt-name { flex: 1; min-width: 0; }
+.opt-title {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 7px;
+  font-size: clamp(14px, 1.15vw, 15px); font-weight: 800; color: var(--ink);
+  line-height: 1.2; letter-spacing: -.015em;
+}
+.opt-cadence { font-size: var(--micro); font-weight: 600; color: var(--muted); margin-top: 3px; }
+
+.opt-pill {
+  display: inline-flex; align-items: center; border: 1.5px solid var(--lilac);
+  color: var(--purple); border-radius: 999px; padding: 2px 6px;
+  font-size: 9.5px; font-weight: 800; letter-spacing: .05em; white-space: nowrap;
+}
+
+.opt-cost { flex: 0 0 auto; text-align: right; }
+.opt-figures { display: flex; align-items: baseline; justify-content: flex-end; gap: 7px; white-space: nowrap; }
+.opt-price { font-size: clamp(17px, 1.8vw, 19.5px); font-weight: 800; letter-spacing: -.025em; color: var(--purple); }
+.opt-was { font-size: clamp(12.5px, 1.3vw, 14px); font-weight: 700; color: var(--muted); }
+.opt-per { font-size: var(--micro); font-weight: 700; color: var(--muted); margin-top: 3px; }
+
+/* Always on, selected or not, so the subscription's terms are readable
+   without committing to it first. Teal survives here and only here: the
+   shipping pill is the same component the protocol card uses. */
+.opt-extra {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 7px 10px;
+  margin-top: 11px; padding-top: 11px; border-top: 1.5px solid var(--hair);
+}
+.opt-extra .ship { margin-top: 0; }
+.opt-note { font-size: var(--micro); font-weight: 600; color: var(--muted); }
+
+/* the button sits under the rows, and carries the selected price */
+.offer-quiet .opts + .btn { margin-top: 14px; }
+
+/* One trust row for the pair. Both claims get the same weight, so neither
+   reads as a footnote; purple throughout, since teal is now reserved for the
+   shipping pills. */
+.trust {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  align-items: center; gap: 12px clamp(28px, 4.5vw, 64px);
+  margin-top: clamp(20px, 2.2vw, 28px);
+}
+.trust-item {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-size: clamp(15px, 1.55vw, 16.5px); font-weight: 700; color: var(--ink);
+  line-height: 1.25;
+}
+.trust-item svg { flex: 0 0 auto; color: var(--purple); }
+
+@media (min-width: 901px) {
+  /* One bottle reads first, the protocol closes. The DOM keeps the protocol
+     first so a phone still meets it first; only the desktop row is swapped. */
+  .col-bottle   { order: 1; }
+  .col-protocol { order: 2; }
+
+  /* Same top padding on both, even though only the lead card needs the room
+     for its badge: it lines the two shots up, and with them the two titles. */
+  .offer-lead, .offer-quiet { padding-top: clamp(34px, 3.2vw, 40px); }
+
+  /* Equal-height cards. Both heads sit at the top so the two titles land on
+     the same line and the cards can be read across; the slack in the shorter
+     one falls into .offer-fill below the head, which keeps both buttons on
+     the same line too. */
+  .offer-quiet .offer-head { padding-bottom: clamp(14px, 1.6vw, 20px); }
+}
+
+/* Small laptops: the pair is still side by side but each card is narrow, and
+   the subscribe row's title, pill and two prices stop fitting on one line.
+   Trim the row rather than let the pill drop under the heading. */
+@media (min-width: 901px) and (max-width: 1010px) {
+  .opt { padding: 12px 11px; }
+  .opt-on { padding: 11.5px 10.5px; }
+  .opt-top { gap: 9px; }
+  .opt-title { font-size: 13.5px; }
+  .opt-pill { font-size: 9px; padding: 2px 5px; letter-spacing: .03em; }
+  .opt-price { font-size: 17px; }
+  .opt-was { font-size: 12.5px; }
+}
+
+/* the last stretch before the cards stack, where the columns are narrowest */
+@media (min-width: 901px) and (max-width: 959px) {
+  .offer { padding-inline: 16px; }
+  .opt-title { font-size: 13px; }
+}
+
+@media (max-width: 900px) {
+  .offers-pair { grid-template-columns: 1fr; max-width: 460px; gap: 12px; }
+  .offer-name { font-size: 16px; margin-top: 5px; }
+
+  /* The lead card carries a name and a longer supply line, so its text column
+     needs more room than the shared phone layout gives: shrink the shot and
+     tighten the gutter, and the price sits on one line again. */
+  .offer-lead .offer-head { gap: 14px; }
+  .offer-lead .offer-shots { height: 84px; }
+  .offer-lead .offer-supply { font-size: 14px; }
+  .offer-lead .offer-price { gap: 8px; }
+  .offer-lead .offer-now { font-size: 36px; }
+  .offer-lead .offer-was { font-size: 17px; }
+
+  /* ---- one-bottle card, phone only -------------------------------------
+     Desktop is deliberately untouched by everything in this block. The card
+     mirrors the protocol card here: same 1px light-purple edge, same header
+     geometry, same type scale. It stays the quieter of the two through the
+     thinner border and the absence of a badge, tint and shadow. */
+  .offer-quiet { border-width: 1px; border-color: var(--lilac); box-shadow: none; }
+
+  /* Equal image columns and an equal gap on both cards, so the two titles
+     start at the same x when the cards are stacked. */
+  .offer-lead .offer-head,
+  .offer-quiet .offer-head { gap: 14px; }
+  .offer-lead .offer-shots,
+  .offer-quiet .offer-shots { flex: 0 0 112px; width: 112px; justify-content: center; padding-left: 0; }
+  /* the lone bottle is a narrow silhouette, so it needs more height than the
+     protocol's three objects to read at the same size */
+  .offer-quiet .offer-shots { height: 104px; }
+  .offer-quiet .offer-head { margin-bottom: 14px; }
+  .offer-quiet .offer-supply { margin-top: 4px; }
+  .opt { padding: 13px 10px; }
+  .opt-on { padding: 12.5px 9.5px; }
+  .opt-dot { width: 20px; height: 20px; }
+  .opt-top { gap: 10px; }
+
+  /* Type scale matched to the protocol card rather than shrunk to fit. */
+  .opt-title { font-size: 17px; }
+  .opt-cadence { font-size: 15px; margin-top: 2px; }
+  .opt-price { font-size: 22px; }
+  .opt-was { font-size: 15px; }
+  .opt-per { font-size: 15px; }
+  .opt-pill { font-size: 9.5px; padding: 2px 6px; letter-spacing: .05em; }
+
+  /* At 17px the label fills the row on its own, so the badge takes the next
+     line instead of squeezing the label onto two. */
+  .opt-label { flex: 0 0 100%; }
+
+  /* The struck price stacks under the live one: side by side they would push
+     the label column below what a 17px heading needs. */
+  .opt-figures { flex-direction: column; align-items: flex-end; gap: 1px; }
+
+  /* Benefits line up with the label text, not the radio, and the rule above
+     them starts there too. */
+  .opt-extra { margin-left: 30px; margin-top: 10px; padding-top: 10px; gap: 6px 8px; }
+  /* Pill and note share one line here. At the protocol card's pill size the
+     pair needs 313px and the indented row only has 268, so the pill is
+     compacted for this nested context; it keeps the same shape and teal. */
+  .opt-extra .ship { font-size: 10px; padding: 4px 9px; letter-spacing: .04em; gap: 5px; }
+  .opt-extra .ship svg { width: 12px; height: 12px; }
+  .opt-note { font-size: 11.5px; }
+}
 `;
