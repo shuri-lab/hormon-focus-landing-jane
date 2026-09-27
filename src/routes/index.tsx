@@ -13,9 +13,8 @@ import imgIngredientsBottle from "@/assets/img/ingredients-bottle.png";
 import imgJjLifestyle from "@/assets/img/jj-lifestyle.jpg";
 import imgJjSmithLogo from "@/assets/img/jj-smith-logo.png";
 import imgMoneyBackBadge from "@/assets/img/money-back-badge.png";
-import imgOffer1Bottle from "@/assets/img/offer-1-bottle.png";
-import imgOffer2Bottles from "@/assets/img/offer-2-bottles.png";
-import imgOfferStarterGuide from "@/assets/img/offer-starter-guide.png";
+import imgOffer1Bottle from "@/assets/img/hf-1-bottle-product-image.png";
+import imgOffer60DayStack from "@/assets/img/hf-60-day-offer.png";
 import imgPartnersDroz from "@/assets/img/partners/droz.png";
 import imgPartnersEssence from "@/assets/img/partners/essence.png";
 import imgPartnersFox from "@/assets/img/partners/fox.png";
@@ -53,6 +52,47 @@ import imgWomanSteps from "@/assets/img/woman-steps.jpg";
 // twice and double up the video handlers. The tracking script already guards
 // itself with window.__hfTracking; this does the same for the rest.
 let wired = false;
+
+// Everything about the protocol offer that anyone is likely to want to change.
+// The card renders from this and nothing else, so names, values and the CTA can
+// be edited here without touching markup.
+//
+// Stack values are set by the team. Only the $99.98 is derived from an actual
+// price (2 x $49.99); the rest are assigned values for the bonuses. A struck
+// "total value" is a reference-price claim, so keep a note of what each one is
+// based on in case it is ever questioned.
+//
+// TODO_BUNDLE_IMAGE - `image` is the single swap point for the new bundle shot.
+const PROTOCOL: {
+  planName: string;
+  planSubtitle: string;
+  ctaLabel: string;
+  image: string;
+  price: string;
+  perDay: string;
+  stack: { label: string; value?: number; included?: boolean }[];
+} = {
+  planName: "The 60-Day Back to You Protocol",
+  planSubtitle: "Finally sleep through the night, lose the stubborn belly and get your energy back.",
+  ctaLabel: "Get the 60-Day Protocol",
+  image: imgOffer60DayStack,
+  price: "$74.99",
+  perDay: "$1.25 a day",
+  stack: [
+    { label: "2 bottles of Hormone Focus",            value: 99.98 },
+    { label: "Simple 60-Day Hormone Support Guide",   value: 49 },
+    { label: "Everyday Hormone-Healthy Recipes",      value: 29 },
+    { label: "Daily Symptom Tracker",                 value: 19 },
+    { label: "60 Days with JJ (email guidance)",      value: 39 },
+  ],
+};
+
+// Priced rows only; "Included" carries no number and is skipped.
+const STACK_TOTAL = PROTOCOL.stack.reduce((n, i) => n + (i.value ?? 0), 0);
+
+// $99.98 keeps its cents, a round $40 does not.
+const money = (n: number) =>
+  "$" + (Number.isInteger(n) ? String(n) : n.toFixed(2));
 
 // The one-bottle card's two options, and everything that changes with them:
 // the copy, the figures, the button, and which Shopify destination it points
@@ -619,36 +659,55 @@ export default function HormoneFocusLanding() {
               <div className="offer offer-best offer-lead">
                 <div className="offer-badge">BESTSELLER</div>
                 <div className="offer-head">
-                  <div className="offer-shots">
-                    <img src={imgOffer2Bottles} alt="Hormone Focus, two bottles" />
-                    <img className="shot-guide" src={imgOfferStarterGuide} alt="Hormone Focus starter guide" />
+                  <div className="offer-shots shots-stack">
+                    <img src={PROTOCOL.image} alt="" />
                   </div>
                   <div className="offer-main">
-                    {/* PLACEHOLDER NAME - JJ is still finalising this. Swap the
-                        string below once the real protocol name is signed off. */}
-                    <div className="offer-name">60-Day Protocol</div>
-                    <div className="offer-supply">2 bottles</div>
-                    <div className="offer-price">
-                      <span className="strike offer-was">$99.98</span>
-                      <span className="offer-now">$74.99</span>
-                    </div>
-                    <div className="offer-day">$1.25 a day</div>
-                    <div className="ship"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: "0" }}><rect x="2" y="7" width="14" height="10" rx="2" /><path d="M16 10h3l3 3v4h-6z" /><circle cx="6.5" cy="19" r="1.8" /><circle cx="18" cy="19" r="1.8" /></svg> FREE SHIPPING</div>
+                    <div className="offer-name">{PROTOCOL.planName}</div>
+                    <div className="offer-supply">{PROTOCOL.planSubtitle}</div>
                   </div>
                 </div>
 
                 <div className="offer-fill"></div>
 
-                <div className="offer-bonus">
-                  <img src={imgOfferStarterGuide} alt="" />
-                  <span><b>Bonus:</b> Hormone Focus starter guide</span>
+                <div className="vs">
+                  <ul className="vs-list">
+                    {PROTOCOL.stack.map((item) => (
+                      <li key={item.label}>
+                        <span className="vs-name">
+                          <span className="vs-tick" aria-hidden="true">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+                          </span>
+                          {item.label}
+                        </span>
+                        {item.included ? (
+                          <span className="vs-incl">Included</span>
+                        ) : (
+                          <span className="vs-val strike">{money(item.value!)}</span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                {/* Desktop only (display:none on a phone). The one-bottle card
-                    is the taller of the two now, and all of the protocol card's
-                    slack was piling up in one gap above the bonus box. A second
-                    spacer below it splits that in two, and the head stays at the
-                    top so both cards' titles still land on the same line. */}
+                {/* Total and price share one band instead of stacking two full
+                    rows, and free shipping rides along as the pill it already
+                    is elsewhere on the page rather than as a list row. */}
+                <div className="vs-deal">
+                  <div className="vs-deal-col">
+                    <span className="vs-deal-l">Total value</span>
+                    <span className="vs-deal-was strike">{money(STACK_TOTAL)}</span>
+                    <span className="ship"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: "0" }}><rect x="2" y="7" width="14" height="10" rx="2" /><path d="M16 10h3l3 3v4h-6z" /><circle cx="6.5" cy="19" r="1.8" /><circle cx="18" cy="19" r="1.8" /></svg> FREE SHIPPING</span>
+                  </div>
+                  <div className="vs-deal-col vs-deal-now">
+                    <span className="vs-deal-l">Today</span>
+                    <span className="offer-now">{PROTOCOL.price}</span>
+                    <span className="offer-day">{PROTOCOL.perDay}</span>
+                  </div>
+                </div>
+
+                {/* Desktop only (display:none on a phone). Splits whatever slack
+                    the card has above and below, instead of one large gap. */}
                 <div className="offer-fill offer-fill-bottom"></div>
 
                 {/* data-offer makes this a store link like the other CTAs, so
@@ -657,7 +716,7 @@ export default function HormoneFocusLanding() {
                     lib/offer-urls.ts: the store is still $79.99 pending a
                     reprice to $74.99. */}
                 <a className="btn btn-primary btn-full" data-offer="bundle" href={PROTOCOL_CHECKOUT_HREF}>
-                  Start the 60-day protocol
+                  {PROTOCOL.ctaLabel}
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h13" /><path d="M12 5l7 7-7 7" /></svg>
                 </a>
               </div>
@@ -723,6 +782,12 @@ export default function HormoneFocusLanding() {
                     );
                   })}
                 </div>
+
+                {/* Desktop only. With the protocol card now carrying a value
+                    stack this card has a lot of slack, and a single spacer above
+                    the options left one void in the middle. A second one below
+                    them spreads it: image, options and button each get air. */}
+                <div className="offer-fill offer-fill-bottom"></div>
 
                 {/* One anchor, not two: React keeps the same DOM node across the
                     selection, so the click listeners tracking.ts attached at load
@@ -1639,7 +1704,7 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   /* width:100% matters - the auto inline margins that centre the pair also
      cancel the stretch it would otherwise get from .stack, which left the
      grid shrink-to-fit and the cards narrower than the max-width implies. */
-  width: 100%; max-width: 1020px; margin-inline: auto; align-items: stretch;
+  width: 100%; max-width: 1200px; margin-inline: auto; align-items: stretch;
 }
 
 /* the lead card: same bestseller treatment, turned up. Wider column, heavier
@@ -1654,12 +1719,95 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
 /* Both cards lead with the same pair: one bold title, one muted subtitle.
    The eyebrow kickers are gone, so the title is the first thing under the
    shot and carries no top margin. */
+/* The 60-day composite is square and holds five objects, so the shared shot
+   height would render the bottles at a third the size of the single-bottle
+   card's. It gets its own, taller box. */
+.shots-stack,
+.offer-quiet .offer-shots { height: clamp(168px, 15.5vw, 208px); }
+.shots-stack img { filter: drop-shadow(0 16px 18px rgba(36, 31, 46, .18)); }
+
 .offer-name {
   font-size: clamp(19px, 2.1vw, 23px); font-weight: 800; color: var(--ink);
   line-height: 1.2; letter-spacing: -.02em; margin-top: 0; text-wrap: balance;
 }
 .offer-quiet .offer-supply,
-.offer-lead .offer-supply { font-size: clamp(14px, 1.45vw, 15.5px); margin-top: 5px; }
+.offer-lead .offer-supply {
+  font-size: clamp(14px, 1.45vw, 15.5px); margin-top: 5px;
+  /* the subtitle is a full sentence now, so balance the lines rather than
+     letting the last word strand on its own */
+  text-wrap: balance;
+}
+
+/* ---- value stack, protocol card ---------------------------------------
+   Same shape as the coaching page's stack (tick + label left, struck value
+   right, dashed rules, tinted total row), rebuilt on this page's tokens. */
+
+.vs { width: 100%; text-align: left; margin-top: clamp(10px, 1.1vw, 13px); }
+
+.vs-list { list-style: none; margin: 0; padding: 0; }
+.vs-list li {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 10px; padding: 6px 0; border-bottom: 1px dashed var(--hair);
+}
+.vs-list li:first-child { padding-top: 0; }
+
+.vs-name {
+  display: flex; align-items: flex-start; gap: 9px; min-width: 0;
+  font-size: clamp(14.5px, 1.5vw, 16px); font-weight: 600; color: var(--ink);
+  line-height: 1.25;
+}
+.vs-tick {
+  flex: 0 0 auto; width: 19px; height: 19px; border-radius: 999px;
+  background: var(--lav); color: var(--purple);
+  display: flex; align-items: center; justify-content: center; margin-top: 1px;
+}
+
+/* .strike supplies the red diagonal the rest of the page already uses */
+.vs-val {
+  /* sized to the widest figure ($99.98) so every value lines up in a column
+     and the labels get all the remaining width */
+  flex: 0 0 auto; min-width: 48px; text-align: right;
+  font-size: clamp(14px, 1.45vw, 15px); font-weight: 700;
+  color: var(--muted); white-space: nowrap;
+}
+.vs-incl {
+  flex: 0 0 auto; font-size: clamp(14px, 1.45vw, 15px); font-weight: 800;
+  color: var(--purple); white-space: nowrap;
+}
+/* placeholder figures, deliberately loud until real numbers land */
+.vs-todo {
+  color: var(--purple-mid); background: var(--lav); border-radius: 6px;
+  padding: 1px 7px; letter-spacing: .02em;
+}
+
+/* total and price in one band, with free shipping alongside */
+/* width:100% - .offer centres its children, so without it the band shrinks to
+   its content and sits narrower than the list above it. */
+.vs-deal {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  gap: clamp(10px, 1.2vw, 16px); background: var(--lav); border-radius: 14px;
+  padding: 10px clamp(11px, 1.3vw, 15px); margin-top: 10px; text-align: left;
+}
+/* left side runs inline and wraps only if it has to */
+.vs-deal-col {
+  display: flex; flex-direction: row; align-items: center; flex-wrap: wrap;
+  gap: 4px 9px; min-width: 0;
+}
+/* flex:0 0 auto matters - .vs-deal-col sets min-width:0 so the left side can
+   wrap, but inherited on this column it let the nowrap price shrink below its
+   own width and spill out of the band. */
+.vs-deal-now {
+  flex: 0 0 auto; min-width: auto;
+  flex-direction: column; align-items: flex-end; text-align: right; gap: 1px;
+}
+.vs-deal-l {
+  font-size: clamp(10.5px, 1.1vw, 12px); font-weight: 800; letter-spacing: .13em;
+  text-transform: uppercase; color: var(--muted); line-height: 1;
+}
+.vs-deal-was { font-size: clamp(18px, 1.95vw, 22px); font-weight: 800; color: var(--ink-soft); }
+.vs-deal .ship { margin-top: 0; }
+.vs-deal .offer-now { font-size: clamp(36px, 4vw, 50px); margin-top: 0; }
+.vs-deal .offer-day { margin-top: 1px; }
 
 /* ---- the one-bottle card's two selectable rows ------------------------- */
 
@@ -1745,9 +1893,31 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   .col-bottle   { order: 1; }
   .col-protocol { order: 2; }
 
-  /* Same top padding on both, even though only the lead card needs the room
-     for its badge: it lines the two shots up, and with them the two titles. */
-  .offer-lead, .offer-quiet { padding-top: clamp(34px, 3.2vw, 40px); }
+  /* the pair asks for 1200px; .wrap caps the rest of the page at 1160 */
+  #offer .wrap { width: min(1200px, 100% - clamp(32px, 6vw, 112px)); }
+
+  /* Only the badge needs clearance up here, so this is as tight as it goes. */
+  .offer-lead, .offer-quiet { padding-top: clamp(24px, 2.2vw, 28px); }
+
+  /* Headers run side by side in both cards: shot on the left at ~40% of the
+     card, title and subtitle beside it, the pair vertically centred. Stacked,
+     these two blocks cost about 100px more per card. */
+  .offer-head { flex-direction: row; align-items: center; gap: clamp(14px, 1.6vw, 20px); }
+  .offer-shots { flex: 0 0 40%; width: 40%; margin-bottom: 0; align-items: center; }
+  .offer-shots img { max-width: 100%; }
+  .offer-main { align-items: flex-start; text-align: left; flex: 1; min-width: 0; width: auto; }
+  .offer-name { text-wrap: pretty; }
+
+  /* the square composites drive the header height, so cap them here */
+  .shots-stack,
+  .offer-quiet .offer-shots { height: clamp(150px, 14vw, 186px); }
+
+  /* The protocol shot renders a bit larger than its box: the box still
+     measures 186px so the header row, the stack and the button do not move,
+     and the extra 12px top and bottom spill into whitespace the composite's
+     own transparent margins already occupy. There is room across the 40%
+     column for the width this adds. */
+  .shots-stack img { height: calc(100% + 24px); margin-block: -12px; }
 
   /* Equal-height cards. Both heads sit at the top so the two titles land on
      the same line and the cards can be read across; the slack in the shorter
@@ -1779,6 +1949,28 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
 
 @media (max-width: 900px) {
   .offers-pair { grid-template-columns: 1fr; max-width: 460px; gap: 12px; }
+
+  /* Width is what the stack needs, so take it back from the gutters: a
+     narrower page margin and narrower card padding, which buys the labels
+     roughly 30px without touching any type size. */
+  #offer .wrap { width: min(1160px, 100% - 16px); }
+  .offer { padding: 16px 11px; }
+  .offer-best { padding-top: 24px; }
+  /* every pixel here goes to the labels: gap, tick and value column all
+     trimmed so the longest name clears one line */
+  .vs-list li { gap: 6px; }
+  .vs-name { gap: 7px; }
+  .vs-tick { width: 16px; height: 16px; }
+  .vs-val { min-width: 46px; }
+
+  /* the deal band is the tightest row on a phone: shrink the pill and the
+     price so the two columns clear each other */
+  .vs-deal { gap: 8px; padding: 10px 11px; }
+  .vs-deal-l { font-size: 10px; }
+  .vs-deal-was { font-size: 17px; }
+  .vs-deal .offer-now { font-size: 32px; }
+  .vs-deal .ship { font-size: 10px; padding: 4px 9px; letter-spacing: .04em; gap: 5px; }
+  .vs-deal .ship svg { width: 12px; height: 12px; }
   .offer-name { font-size: 16px; margin-top: 5px; }
 
   /* The lead card carries a name and a longer supply line, so its text column
@@ -1786,6 +1978,8 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
      tighten the gutter, and the price sits on one line again. */
   .offer-lead .offer-head { gap: 14px; }
   .offer-lead .offer-shots { height: 84px; }
+  /* square, so this fills the 112px column exactly */
+  .offer-lead .shots-stack { height: 112px; }
   .offer-lead .offer-supply { font-size: 14px; }
   .offer-lead .offer-price { gap: 8px; }
   .offer-lead .offer-now { font-size: 36px; }
@@ -1807,6 +2001,15 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   .offer-quiet .offer-shots { height: 104px; }
   .offer-quiet .offer-head { margin-bottom: 14px; }
   .offer-quiet .offer-supply { margin-top: 4px; }
+
+  /* display:contents dissolves .offer-main so the head's own flex row holds
+     the title and the subtitle directly. The title sits beside the shot; the
+     subtitle takes a full-width line of its own, which is what keeps it to two
+     lines instead of four in the narrow column. */
+  .offer-lead .offer-main { display: contents; }
+  .offer-lead .offer-head { flex-wrap: wrap; }
+  .offer-lead .offer-name { flex: 1; min-width: 0; text-align: left; }
+  .offer-lead .offer-supply { flex: 0 0 100%; text-align: left; margin-top: 8px; }
   .opt { padding: 13px 10px; }
   .opt-on { padding: 12.5px 9.5px; }
   .opt-dot { width: 20px; height: 20px; }
