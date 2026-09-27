@@ -683,7 +683,7 @@ export default function HormoneFocusLanding() {
                         {item.included ? (
                           <span className="vs-incl">Included</span>
                         ) : (
-                          <span className="vs-val strike">{money(item.value!)}</span>
+                          <span className="vs-val"><span className="strike">{money(item.value!)}</span></span>
                         )}
                       </li>
                     ))}
@@ -1764,8 +1764,9 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
 
 /* .strike supplies the red diagonal the rest of the page already uses */
 .vs-val {
-  /* sized to the widest figure ($99.98) so every value lines up in a column
-     and the labels get all the remaining width */
+  /* Sized to the widest figure ($99.98) so every value lines up in a column.
+     The .strike sits on an inner span rather than on this box, so the red
+     line only ever spans the digits, not the padded column width. */
   flex: 0 0 auto; min-width: 48px; text-align: right;
   font-size: clamp(14px, 1.45vw, 15px); font-weight: 700;
   color: var(--muted); white-space: nowrap;
@@ -1950,17 +1951,15 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
 @media (max-width: 900px) {
   .offers-pair { grid-template-columns: 1fr; max-width: 460px; gap: 12px; }
 
-  /* Width is what the stack needs, so take it back from the gutters: a
-     narrower page margin and narrower card padding, which buys the labels
-     roughly 30px without touching any type size. */
-  #offer .wrap { width: min(1160px, 100% - 16px); }
-  .offer { padding: 16px 11px; }
+  /* Both cards sit 20px off the screen edge and carry 20px of their own, so
+     their left and right edges line up exactly. */
+  #offer .wrap { width: min(1160px, 100% - 40px); }
+  .offer { padding: 16px 20px; }
   .offer-best { padding-top: 24px; }
-  /* every pixel here goes to the labels: gap, tick and value column all
-     trimmed so the longest name clears one line */
-  .vs-list li { gap: 6px; }
-  .vs-name { gap: 7px; }
-  .vs-tick { width: 16px; height: 16px; }
+
+  .vs-list li { gap: 8px; }
+  .vs-name { gap: 8px; }
+  .vs-tick { width: 16px; height: 16px; margin-top: 2px; }
   .vs-val { min-width: 46px; }
 
   /* the deal band is the tightest row on a phone: shrink the pill and the
@@ -1973,43 +1972,29 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   .vs-deal .ship svg { width: 12px; height: 12px; }
   .offer-name { font-size: 16px; margin-top: 5px; }
 
-  /* The lead card carries a name and a longer supply line, so its text column
-     needs more room than the shared phone layout gives: shrink the shot and
-     tighten the gutter, and the price sits on one line again. */
-  .offer-lead .offer-head { gap: 14px; }
-  .offer-lead .offer-shots { height: 84px; }
-  /* square, so this fills the 112px column exactly */
-  .offer-lead .shots-stack { height: 112px; }
-  .offer-lead .offer-supply { font-size: 14px; }
-  .offer-lead .offer-price { gap: 8px; }
-  .offer-lead .offer-now { font-size: 36px; }
-  .offer-lead .offer-was { font-size: 17px; }
-
-  /* ---- one-bottle card, phone only -------------------------------------
-     Desktop is deliberately untouched by everything in this block. The card
-     mirrors the protocol card here: same 1px light-purple edge, same header
-     geometry, same type scale. It stays the quieter of the two through the
-     thinner border and the absence of a badge, tint and shadow. */
-  /* Equal image columns and an equal gap on both cards, so the two titles
-     start at the same x when the cards are stacked. */
+  /* ---- both card headers: shot left, title and subtitle right ----------
+     One structure for both cards. The protocol's shot takes 35% of the inner
+     width and its height follows the square, so there is no dead space above
+     or below it; the text group beside it is centred against it. */
   .offer-lead .offer-head,
-  .offer-quiet .offer-head { gap: 14px; }
-  .offer-lead .offer-shots,
-  .offer-quiet .offer-shots { flex: 0 0 112px; width: 112px; justify-content: center; padding-left: 0; }
-  /* the lone bottle is a narrow silhouette, so it needs more height than the
-     protocol's three objects to read at the same size */
-  .offer-quiet .offer-shots { height: 104px; }
+  .offer-quiet .offer-head { gap: 14px; align-items: center; flex-wrap: nowrap; }
+  .offer-lead .offer-main,
+  .offer-quiet .offer-main {
+    display: flex; flex-direction: column; align-items: flex-start;
+    text-align: left; flex: 1; min-width: 0; width: auto;
+  }
+  .offer-lead .offer-shots {
+    flex: 0 0 35%; width: 35%; height: auto; padding-left: 0; margin-bottom: 0;
+  }
+  .offer-lead .shots-stack img { width: 100%; height: auto; margin-block: 0; }
+  .offer-lead .offer-supply { font-size: 14px; margin-top: 6px; text-align: left; }
+  /* .vs adds its own 10px, so this lands the header-to-stack gap on 20px */
+  .offer-lead .offer-head { margin-bottom: 10px; }
+
+  /* the lone bottle is a narrow silhouette, so it keeps its own fixed column */
+  .offer-quiet .offer-shots { flex: 0 0 112px; width: 112px; height: 104px; justify-content: center; padding-left: 0; }
   .offer-quiet .offer-head { margin-bottom: 14px; }
   .offer-quiet .offer-supply { margin-top: 4px; }
-
-  /* display:contents dissolves .offer-main so the head's own flex row holds
-     the title and the subtitle directly. The title sits beside the shot; the
-     subtitle takes a full-width line of its own, which is what keeps it to two
-     lines instead of four in the narrow column. */
-  .offer-lead .offer-main { display: contents; }
-  .offer-lead .offer-head { flex-wrap: wrap; }
-  .offer-lead .offer-name { flex: 1; min-width: 0; text-align: left; }
-  .offer-lead .offer-supply { flex: 0 0 100%; text-align: left; margin-top: 8px; }
   .opt { padding: 13px 10px; }
   .opt-on { padding: 12.5px 9.5px; }
   .opt-dot { width: 20px; height: 20px; }
