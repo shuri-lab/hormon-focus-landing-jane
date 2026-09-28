@@ -1,0 +1,23 @@
+# DigitalOcean App Platform spec for hf-landing-page.
+#
+# Type: STATIC SITE (not a web service). This app is a plain Vite + React SPA -
+# one index.html, no server code, no SSR, no API routes - so it builds to static
+# files in dist/ and is served from the CDN. A web service would run an
+# always-on container for no reason.
+#
+# Deploy with: doctl apps create --spec .do/app.yaml
+# Or: App Platform dashboard -> Create App -> select this repo/branch.
+name: hf-landing-page
+static_sites:
+  - name: web
+    github:
+      repo: YoBody-Oganization/hf-landing-page
+      branch: deploy/app-platform-static
+      deploy_on_push: true
+    environment_slug: node-js
+    build_command: npm run build
+    output_dir: dist
+    index_document: index.html
+    catchall_document: index.html
+    routes:
+      - path: /
