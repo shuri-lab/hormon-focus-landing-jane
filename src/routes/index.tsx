@@ -666,7 +666,7 @@ export default function HormoneFocusLanding() {
 
           <div className="stack-s" style={{ alignItems: "center", textAlign: "center" }}>
             <p className="eyebrow">Get started</p>
-            <h2 className="h2" style={{ color: "var(--ink)" }}>Feel like yourself again for just <span style={{ color: "var(--purple)" }}>$1.25 a day</span>.</h2>
+            <h2 className="h2" style={{ color: "var(--ink)" }}>Feel like you again for just <span style={{ color: "var(--purple)" }}>$1.25 a day</span>.</h2>
             <p className="body" style={{ maxWidth: "42ch" }}>Less than a coffee. Two capsules a day.</p>
           </div>
 
