@@ -6,6 +6,8 @@ import { initStickyBar } from "@/lib/sticky";
 import { applyOffers } from "@/lib/offers";
 import { initTracking } from "@/lib/tracking";
 import { HF_OFFERS, PROTOCOL_CHECKOUT_HREF } from "@/lib/offer-urls";
+import Reviews from "@/components/reviews";
+import { useReviewStats } from "@/lib/use-review-stats";
 
 import imgFbReview from "@/assets/img/fb-review.jpg";
 import imgHeroBottle from "@/assets/img/hero-bottle.png";
@@ -146,6 +148,8 @@ const PLANS = [
 type PlanId = (typeof PLANS)[number]["id"];
 
 export default function HormoneFocusLanding() {
+  // Live rating and review count from Okendo, shown in the three badges below.
+  const rating = useReviewStats();
   const [plan, setPlan] = useState<PlanId>("once");
   const optRefs = useRef<Array<HTMLDivElement | null>>([]);
 
@@ -225,8 +229,8 @@ export default function HormoneFocusLanding() {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="#E8B84B"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="#E8B84B"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
               </span>
-              <b>4.9</b>
-              <span className="badge-t">from 172 verified reviews</span>
+              <b>{rating.average.toFixed(1)}</b>
+              <span className="badge-t">from {rating.total} verified reviews</span>
             </div>
 
             <div className="stack-s">
@@ -402,8 +406,8 @@ export default function HormoneFocusLanding() {
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="#E8B84B"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="#E8B84B"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
               </span>
-              <b>4.9</b>
-              <span className="small">from 172 verified reviews</span>
+              <b>{rating.average.toFixed(1)}</b>
+              <span className="small">from {rating.total} verified reviews</span>
             </div>
           </div>
 
@@ -643,8 +647,8 @@ export default function HormoneFocusLanding() {
                 <svg width="19" height="19" viewBox="0 0 24 24" fill="#F3CE73"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
                 <svg width="19" height="19" viewBox="0 0 24 24" fill="#F3CE73"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
               </span>
-              <b style={{ color: "#FFFFFF" }}>4.9</b>
-              <span className="micro">from 172 verified reviews</span>
+              <b style={{ color: "#FFFFFF" }}>{rating.average.toFixed(1)}</b>
+              <span className="micro">from {rating.total} verified reviews</span>
             </div>
             <a className="btn btn-light" href="#offer" style={{ borderRadius: "999px" }}>
               Get Hormone Focus
@@ -913,6 +917,9 @@ export default function HormoneFocusLanding() {
           </div>
         </div>
       </section>
+
+      {/* ===== REVIEWS (live, from Okendo) ===== */}
+      <Reviews />
 
       {/* ===== SIGN-OFF ===== */}
       <section className="band band-white">
@@ -2097,5 +2104,102 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   .opt-extra .ship { font-size: 10px; padding: 4px 9px; letter-spacing: .04em; gap: 5px; }
   .opt-extra .ship svg { width: 12px; height: 12px; }
   .opt-note { font-size: 11.5px; }
+}
+
+/* ---- reviews, live from Okendo ----------------------------------------- */
+
+.rv-stars { display: inline-flex; gap: 2px; line-height: 0; }
+.rv-star { fill: #DCD3E8; flex: 0 0 auto; }
+.rv-star.on { fill: var(--gold); }
+
+.rv-summary {
+  display: grid; grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 44px); align-items: center;
+  background: var(--lav); border-radius: 20px;
+  padding: clamp(18px, 2.2vw, 26px) clamp(20px, 2.6vw, 30px);
+}
+.rv-score { text-align: center; }
+.rv-avg { font-size: clamp(44px, 5vw, 60px); font-weight: 800; line-height: 1; letter-spacing: -.03em; color: var(--purple); }
+.rv-score .rv-stars { margin-top: 8px; }
+.rv-count { font-size: var(--small); font-weight: 700; color: var(--ink-soft); margin-top: 7px; }
+
+.rv-bars { display: grid; gap: 7px; }
+.rv-bar { display: grid; grid-template-columns: 52px minmax(0, 1fr) 34px; gap: 10px; align-items: center; }
+.rv-bar-l { font-size: var(--micro); font-weight: 700; color: var(--muted); white-space: nowrap; }
+.rv-bar-n { font-size: var(--micro); font-weight: 700; color: var(--muted); text-align: right; }
+.rv-track { height: 8px; border-radius: 999px; background: #E3D6F3; overflow: hidden; }
+.rv-fill { display: block; height: 100%; border-radius: 999px; background: var(--grad); }
+
+.rv-controls { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.rv-sort { display: inline-flex; align-items: center; gap: 9px; font-size: var(--small); font-weight: 700; color: var(--ink-soft); }
+.rv-sort select {
+  font-family: inherit; font-size: var(--small); font-weight: 700; color: var(--ink);
+  background: var(--white); border: 1.5px solid var(--hair); border-radius: 11px;
+  padding: 9px 12px; min-height: 44px; cursor: pointer;
+}
+.rv-sort select:focus-visible { outline: 3px solid var(--purple-mid); outline-offset: 2px; }
+.rv-showing { font-size: var(--micro); font-weight: 600; color: var(--muted); }
+
+/* stretch, not start: reviews vary a lot in length, and ragged card bottoms
+   left holes in the grid. Each row matches its tallest card and the attribution
+   sits on the bottom edge. */
+.rv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 1.8vw, 20px); align-items: stretch; }
+
+.rv-card {
+  background: var(--white); border: 1.5px solid var(--hair); border-radius: 18px;
+  padding: clamp(16px, 1.8vw, 20px); display: flex; flex-direction: column; text-align: left;
+}
+.rv-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.rv-date { font-size: var(--micro); font-weight: 600; color: var(--muted); white-space: nowrap; }
+.rv-title { font-size: clamp(15.5px, 1.6vw, 17px); font-weight: 800; color: var(--ink); line-height: 1.3; margin: 10px 0 0; }
+.rv-body {
+  font-size: clamp(14.5px, 1.5vw, 15.5px); font-weight: 500; color: var(--ink-soft);
+  line-height: 1.55; margin: 8px 0 0;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; overflow: hidden;
+}
+.rv-body.is-open { -webkit-line-clamp: unset; overflow: visible; }
+.rv-more {
+  align-self: flex-start; margin-top: 6px; padding: 0; border: 0; background: none;
+  font-family: inherit; font-size: var(--micro); font-weight: 800; color: var(--purple);
+  cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+}
+.rv-more:focus-visible { outline: 3px solid var(--purple-mid); outline-offset: 3px; border-radius: 4px; }
+
+.rv-photos { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.rv-photo { padding: 0; border: 1.5px solid var(--hair); border-radius: 10px; overflow: hidden; cursor: pointer; background: none; line-height: 0; }
+.rv-photo img { width: 62px; height: 62px; object-fit: cover; display: block; }
+.rv-photo:focus-visible { outline: 3px solid var(--purple-mid); outline-offset: 2px; }
+
+.rv-who { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 13px; border-top: 1px dashed var(--hair); }
+.rv-name { font-size: var(--small); font-weight: 800; color: var(--ink); }
+.rv-verified {
+  font-size: 10.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--teal); border: 1.5px solid var(--teal-edge); background: var(--teal-soft);
+  border-radius: 999px; padding: 3px 8px; white-space: nowrap;
+}
+
+/* skeletons, shown only while the fetch is in flight */
+.rv-skel { gap: 9px; }
+.sk { display: block; border-radius: 7px; background: linear-gradient(90deg, #F1E9FA 25%, #E7DBF6 37%, #F1E9FA 63%); background-size: 400% 100%; animation: sk 1.3s ease infinite; }
+.sk-row { height: 15px; width: 45%; }
+.sk-title { height: 17px; width: 70%; margin-top: 4px; }
+.sk-line { height: 12px; width: 100%; }
+.sk-line.short { width: 60%; }
+.sk-who { height: 14px; width: 38%; margin-top: 10px; }
+@keyframes sk { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+@media (prefers-reduced-motion: reduce) { .sk { animation: none; } }
+
+.rv-lightbox {
+  position: fixed; inset: 0; z-index: 90; background: rgba(36, 31, 46, .84);
+  display: flex; align-items: center; justify-content: center; padding: 24px; cursor: zoom-out;
+}
+.rv-lightbox img { max-width: min(92vw, 900px); max-height: 88vh; border-radius: 14px; display: block; }
+.rv-close { position: absolute; top: 16px; right: 20px; font-size: 34px; line-height: 1; color: #fff; background: none; border: 0; cursor: pointer; }
+
+@media (max-width: 860px) {
+  .rv-grid { grid-template-columns: 1fr; }
+  .rv-summary { grid-template-columns: 1fr; gap: 16px; text-align: center; }
+  .rv-bar { grid-template-columns: 48px minmax(0, 1fr) 30px; }
+  .rv-controls { justify-content: center; }
 }
 `;
