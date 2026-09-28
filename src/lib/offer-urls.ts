@@ -21,18 +21,12 @@ export const HF_OFFERS: Record<string, string> = {
   protocol: 'https://shop.jjsmithonline.com/cart/add?id=54355951845487&quantity=1&selling_plan=5529010287',
 };
 
-// The 60-Day Protocol card's destination: the two-bottle bundle,
-// variant 54330638663791 ("Hormone Focus Bundle - 2 Bottles").
+// The kit's destination: variant 54330638663791, "Hormone Focus 60-Day Kit".
 //
-// PENDING A SHOPIFY PRICE CHANGE. The card and the section headline advertise
-// $74.99 ($1.25 a day, "Save $24.99"). As of 2026-09-25 that variant is still
-// listed at $79.99, so the cart charges $5 more than the page says. This is
-// known and accepted: the store is being repriced to $74.99.
+// The store now lists it at $74.99, matching the card and the section headline
+// (checked against shop.jjsmithonline.com/products.json on 2026-09-28). The
+// earlier $79.99 mismatch is resolved.
 //
-// Until it is, expect $79.99 in the cart when testing. Do not deploy the page
-// to real traffic before the store price matches.
-//
-// When you reprice: editing the EXISTING variant's price needs no code change,
-// because the id below does not change. Only if a NEW variant or product is
-// created does this URL need updating.
+// routes/index.tsx adds the discount code to this before rendering it, and
+// lib/tracking.ts adds the visitor's campaign on top.
 export const PROTOCOL_CHECKOUT_HREF = HF_OFFERS.bundle;

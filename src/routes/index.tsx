@@ -14,7 +14,10 @@ import imgJjLifestyle from "@/assets/img/jj-lifestyle.jpg";
 import imgJjSmithLogo from "@/assets/img/jj-smith-logo.png";
 import imgMoneyBackBadge from "@/assets/img/money-back-badge.png";
 import imgOffer1Bottle from "@/assets/img/hf-1-bottle-product-image.png";
-import imgOffer60DayStack from "@/assets/img/hf-60-day-offer.png";
+import imgKitPng from "@/assets/img/hf-protocol-image.png";
+import imgKit512 from "@/assets/img/hf-protocol-image-512w.webp";
+import imgKit768 from "@/assets/img/hf-protocol-image-768w.webp";
+import imgKit1024 from "@/assets/img/hf-protocol-image-1024w.webp";
 import imgPartnersDroz from "@/assets/img/partners/droz.png";
 import imgPartnersEssence from "@/assets/img/partners/essence.png";
 import imgPartnersFox from "@/assets/img/partners/fox.png";
@@ -67,28 +70,40 @@ const PROTOCOL: {
   planName: string;
   planSubtitle: string;
   ctaLabel: string;
+  discountCode: string;
   image: string;
   price: string;
   perDay: string;
-  stack: { label: string; value?: number; included?: boolean }[];
+  stack: { label: string; value?: number; included?: boolean; note?: string }[];
 } = {
-  planName: "The 60-Day Back to You Protocol",
-  planSubtitle: "Finally sleep through the night, lose the stubborn belly and get your energy back.",
-  ctaLabel: "Get the 60-Day Protocol",
-  image: imgOffer60DayStack,
+  planName: "The 60-Day Feel Like YOU Again Kit",
+  planSubtitle: "Better Sleep. Less Stubborn Belly. More Energy. More YOU.",
+  ctaLabel: "Get the 60-Day Kit",
+  // Auto-applied at checkout on this offer only. Change it here.
+  discountCode: "HF60FREESHIP",
+  image: imgKitPng,
   price: "$74.99",
   perDay: "$1.25 a day",
   stack: [
-    { label: "2 bottles of Hormone Focus",            value: 99.98 },
-    { label: "Simple 60-Day Hormone Support Guide",   value: 49 },
-    { label: "Everyday Hormone-Healthy Recipes",      value: 29 },
-    { label: "Daily Symptom Tracker",                 value: 19 },
-    { label: "60 Days with JJ (email guidance)",      value: 39 },
+    { label: "2 Bottles of Hormone Focus", value: 99.99 },
+    { label: "The 60-Day Hormone Fix eBook", value: 49 },
+    { label: "Hormone Healthy Recipes eBook", value: 29 },
+    { label: "Daily Symptom Tracker", value: 19 },
   ],
 };
 
 // Priced rows only; "Included" carries no number and is skipped.
 const STACK_TOTAL = PROTOCOL.stack.reduce((n, i) => n + (i.value ?? 0), 0);
+
+// The protocol cart link with the discount applied. Built through URL rather
+// than concatenated: the base already carries ?storefront=true, so this joins
+// with & and replaces rather than repeats if the code is ever changed or set
+// twice. lib/tracking.ts then layers the visitor's campaign on top the same way.
+const PROTOCOL_HREF = (() => {
+  const u = new URL(PROTOCOL_CHECKOUT_HREF);
+  u.searchParams.set("discount", PROTOCOL.discountCode);
+  return u.toString();
+})();
 
 // $99.98 keeps its cents, a round $40 does not.
 const money = (n: number) =>
@@ -658,17 +673,24 @@ export default function HormoneFocusLanding() {
             <div className="offer-col col-protocol">
               <div className="offer offer-best offer-lead">
                 <div className="offer-badge">BESTSELLER</div>
-                <div className="offer-head">
-                  <div className="offer-shots shots-stack">
-                    <img src={PROTOCOL.image} alt="" />
-                  </div>
-                  <div className="offer-main">
-                    <div className="offer-name">{PROTOCOL.planName}</div>
-                    <div className="offer-supply">{PROTOCOL.planSubtitle}</div>
-                  </div>
-                </div>
-
-                <div className="offer-fill"></div>
+                {/* The banner carries the title and subtitle as artwork, so the
+                    visible ones are gone. planName/planSubtitle still drive the
+                    alt text and an sr-only heading, which is what screen readers
+                    and crawlers read. */}
+                <h3 className="sr-only">{PROTOCOL.planName}. {PROTOCOL.planSubtitle}</h3>
+                <picture className="kit-shot">
+                  <source
+                    type="image/webp"
+                    srcSet={`${imgKit512} 512w, ${imgKit768} 768w, ${imgKit1024} 1024w`}
+                    sizes="(max-width: 900px) calc(100vw - 80px), 700px"
+                  />
+                  <img
+                    src={PROTOCOL.image}
+                    width="1024"
+                    height="768"
+                    alt={`${PROTOCOL.planName}: 2 bottles of Hormone Focus, The 60-Day Hormone Fix eBook, Hormone Healthy Recipes eBook and Daily Symptom Tracker`}
+                  />
+                </picture>
 
                 <div className="vs">
                   <ul className="vs-list">
@@ -678,7 +700,10 @@ export default function HormoneFocusLanding() {
                           <span className="vs-tick" aria-hidden="true">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
                           </span>
-                          {item.label}
+                          <span className="vs-text">
+                            {item.label}
+                            {item.note ? <span className="vs-note">{item.note}</span> : null}
+                          </span>
                         </span>
                         {item.included ? (
                           <span className="vs-incl">Included</span>
@@ -710,12 +735,11 @@ export default function HormoneFocusLanding() {
                     the card has above and below, instead of one large gap. */}
                 <div className="offer-fill offer-fill-bottom"></div>
 
-                {/* data-offer makes this a store link like the other CTAs, so
-                    tracking.ts decorates it with the visitor's campaign and
-                    fires BridgeCTAClick on it. See the PRICE MISMATCH note in
-                    lib/offer-urls.ts: the store is still $79.99 pending a
-                    reprice to $74.99. */}
-                <a className="btn btn-primary btn-full" data-offer="bundle" href={PROTOCOL_CHECKOUT_HREF}>
+                {/* No data-offer here on purpose: applyOffers() rewrites those
+                    hrefs from the plain HF_OFFERS table, which would drop the
+                    discount. tracking.ts keys off the hostname, not data-offer,
+                    so campaign decoration and BridgeCTAClick still apply. */}
+                <a className="btn btn-primary btn-full" href={PROTOCOL_HREF}>
                   {PROTOCOL.ctaLabel}
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h13" /><path d="M12 5l7 7-7 7" /></svg>
                 </a>
@@ -733,7 +757,7 @@ export default function HormoneFocusLanding() {
                   <div className="offer-shots"><img src={imgOffer1Bottle} alt="Hormone Focus, one bottle" /></div>
                   <div className="offer-main">
                     <div className="offer-name">30-Day Supply</div>
-                    <div className="offer-supply">1 bottle</div>
+                    <div className="offer-supply">One bottle of Hormone Focus. 60 capsules, two a day.</div>
                   </div>
                 </div>
 
@@ -1699,12 +1723,12 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
 
 .offers-pair {
   /* the protocol takes the wider column - roughly 45/55 */
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.18fr);
+  grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
   gap: clamp(18px, 2.2vw, 30px);
   /* width:100% matters - the auto inline margins that centre the pair also
      cancel the stretch it would otherwise get from .stack, which left the
      grid shrink-to-fit and the cards narrower than the max-width implies. */
-  width: 100%; max-width: 1200px; margin-inline: auto; align-items: stretch;
+  width: 100%; max-width: 1070px; margin-inline: auto; align-items: stretch;
 }
 
 /* the lead card: same bestseller treatment, turned up. Wider column, heavier
@@ -1738,6 +1762,38 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   text-wrap: balance;
 }
 
+/* ---- the kit banner, protocol card ------------------------------------
+   The artwork carries the title and subtitle, so it runs edge to edge inside
+   the card. The negative margins mirror the card's own padding; keep them in
+   step if that padding ever changes. */
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+  border: 0;
+}
+
+/* The strip owns the card's top edge now, so the artwork sits below it,
+   centred and inset rather than bled to the edges. */
+.kit-shot {
+  display: block; align-self: center; width: 82%; margin: 0 auto 12px;
+}
+.kit-shot img { display: block; width: 100%; height: auto; }
+
+/* Not a floating pill any more: a strip fixed across the card's top, inside
+   the border, carrying the card's own top radius. The negative margins cancel
+   the card's padding so it reaches the border on three sides; align-self keeps
+   .offer's centring from shrink-wrapping it. */
+.offer-lead .offer-badge {
+  position: static; transform: none; align-self: stretch; width: auto;
+  display: flex; align-items: center; justify-content: center;
+  height: 36px; padding: 0; border-radius: 20px 20px 0 0;
+  box-shadow: none; letter-spacing: .1em;
+  margin-inline: calc(-1 * clamp(20px, 2.2vw, 24px));
+  margin-top: calc(-1 * clamp(24px, 2.2vw, 28px));
+  margin-bottom: 16px;
+}
+
 /* ---- value stack, protocol card ---------------------------------------
    Same shape as the coaching page's stack (tick + label left, struck value
    right, dashed rules, tinted total row), rebuilt on this page's tokens. */
@@ -1756,6 +1812,13 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   font-size: clamp(14.5px, 1.5vw, 16px); font-weight: 600; color: var(--ink);
   line-height: 1.25;
 }
+/* the label and, on one row only, its description line */
+.vs-text { display: flex; flex-direction: column; min-width: 0; }
+.vs-note {
+  font-size: clamp(13px, 1.35vw, 14px); font-style: italic; font-weight: 500;
+  color: var(--muted); line-height: 1.3; margin-top: 3px;
+}
+
 .vs-tick {
   flex: 0 0 auto; width: 19px; height: 19px; border-radius: 999px;
   background: var(--lav); color: var(--purple);
@@ -1895,7 +1958,16 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   .col-protocol { order: 2; }
 
   /* the pair asks for 1200px; .wrap caps the rest of the page at 1160 */
-  #offer .wrap { width: min(1200px, 100% - clamp(32px, 6vw, 112px)); }
+  #offer .wrap { width: min(1070px, 100% - clamp(32px, 6vw, 112px)); }
+
+  /* tighter than the shared values: the banner is tall, so the rows and the
+     gaps around them give back what they can */
+  .vs-list li { padding: 4px 0; }
+  .vs { margin-top: 4px; }
+  .kit-shot { margin-bottom: 8px; }
+  .vs-deal { margin-top: 8px; }
+  /* both, or the two buttons end up on different lines */
+  .offer-lead, .offer-quiet { padding-bottom: 20px; }
 
   /* Only the badge needs clearance up here, so this is as tight as it goes. */
   .offer-lead, .offer-quiet { padding-top: clamp(24px, 2.2vw, 28px); }
@@ -1903,22 +1975,16 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   /* Headers run side by side in both cards: shot on the left at ~40% of the
      card, title and subtitle beside it, the pair vertically centred. Stacked,
      these two blocks cost about 100px more per card. */
-  .offer-head { flex-direction: row; align-items: center; gap: clamp(14px, 1.6vw, 20px); }
-  .offer-shots { flex: 0 0 40%; width: 40%; margin-bottom: 0; align-items: center; }
+  /* The protocol card no longer has a head at all (the banner replaced it),
+     so this is the one-bottle card's: stacked and centred, which fills the
+     height it would otherwise leave as a gap beside the taller card. */
+  .offer-head { flex-direction: column; align-items: center; gap: 0; }
+  .offer-shots { flex: 0 0 auto; width: auto; margin-bottom: 14px; align-items: flex-end; }
   .offer-shots img { max-width: 100%; }
-  .offer-main { align-items: flex-start; text-align: left; flex: 1; min-width: 0; width: auto; }
+  .offer-main { align-items: center; text-align: center; width: 100%; }
   .offer-name { text-wrap: pretty; }
 
-  /* the square composites drive the header height, so cap them here */
-  .shots-stack,
-  .offer-quiet .offer-shots { height: clamp(150px, 14vw, 186px); }
-
-  /* The protocol shot renders a bit larger than its box: the box still
-     measures 186px so the header row, the stack and the button do not move,
-     and the extra 12px top and bottom spill into whitespace the composite's
-     own transparent margins already occupy. There is room across the 40%
-     column for the width this adds. */
-  .shots-stack img { height: calc(100% + 24px); margin-block: -12px; }
+  .offer-quiet .offer-shots { height: clamp(175px, 16.5vw, 205px); }
 
   /* Equal-height cards. Both heads sit at the top so the two titles land on
      the same line and the cards can be read across; the slack in the shorter
@@ -1927,7 +1993,10 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   /* Tightened from ~20px: the larger option text has to come from somewhere,
      and this gap is the slack in the card rather than the section. */
   .offer-quiet .offer-head { padding-bottom: 12px; }
-  .offer-quiet .offer-fill { min-height: 0; }
+  /* A floor on the one-bottle card's two spacers: at 0 the options block sat
+     flush against the button. The bottle comes down to pay for it, so the card
+     does not get taller. */
+  .offer-quiet .offer-fill { min-height: 16px; }
   .offer-fill-bottom { min-height: 0; }
   /* the bonus box brings its own 14px, so the spacer starts from zero */
   .offer-lead .offer-bonus { margin-bottom: 0; }
@@ -1956,6 +2025,13 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   #offer .wrap { width: min(1160px, 100% - 40px); }
   .offer { padding: 16px 20px; }
   .offer-best { padding-top: 24px; }
+  /* 8% down from the old full-bleed width, which is a touch wider than the
+     content box, so it keeps a small bleed */
+  .kit-shot { width: calc(100% + 10px); margin: 0 -5px 2px; }
+  .offer-lead .offer-badge {
+    margin-inline: -20px; margin-top: -24px; margin-bottom: 12px;
+    border-radius: 16px 16px 0 0; height: 34px;
+  }
 
   .vs-list li { gap: 8px; }
   .vs-name { gap: 8px; }
