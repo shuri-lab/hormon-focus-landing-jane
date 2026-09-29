@@ -929,10 +929,12 @@ export default function HormoneFocusLanding() {
           <div className="stack-s">
             <p className="eyebrow">Our promise</p>
             <h2 className="h2">60-DAY HAPPINESS <em>guarantee</em></h2>
-            <p className="body">We encourage everyone to try our products for 2 months and we have a 60-day happiness guarantee (refund policy).</p>
-            <p className="body" style={{ fontWeight: "600", color: "#FFFFFF" }}>If you are not satisfied with our products, we offer a money-back guarantee for up to two bottles within 60 days of your purchase for those in the US. At this time, all international orders are final.</p>
-            <hr className="rule" />
-            <p className="micro">To initiate a return, you must contact support@jjsmithonline.com within 60 days to notify them of your refund request. Once the product is received, the refund will be issued for the amount you paid for the product to the form of payment used for the purchase. Note that shipping is non-refundable and refunds do not include the cost of shipping. Refunds will be issued by us in our sole discretion.</p>
+            <p className="body">Try it for 60 days. If you&rsquo;re not satisfied, you get your money back.</p>
+            <a className="btn gt-cta" href="#offer">
+              Start today, risk-free
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h13" /><path d="M12 5l7 7-7 7" /></svg>
+            </a>
+            <p className="gt-fine">US orders only &nbsp;&middot;&nbsp; Covers up to two bottles &nbsp;&middot;&nbsp; Shipping not refunded</p>
           </div>
         </div>
       </section>
@@ -1007,13 +1009,47 @@ export default function HormoneFocusLanding() {
         </div>
       </section>
 
-      {/* ===== FOOTNOTES ===== */}
-      <footer className="footnotes" style={{ background: "#E7DCF3", paddingTop: "clamp(26px, 3.4vw, 40px)" }}>
-        <div className="wrap stack-s" style={{ gap: "10px" }}>
-          <p className="micro" style={{ maxWidth: "92ch" }}>General education about a life stage, not medical advice. See your doctor if symptoms are new, severe or worrying.</p>
-          <p className="micro" style={{ maxWidth: "92ch" }}>These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure or prevent any disease. Ingredient descriptions as published at JJSmithOnline.com.</p>
-          <p className="micro" style={{ maxWidth: "92ch" }}>Reviews, photos and videos from verified buyers on JJSmithOnline.com, and a comment from Facebook. Individual results vary and are not guaranteed.</p>
-          <p className="micro">Copyright &copy;2026 By JJ Smith. All Rights Reserved &nbsp;&middot;&nbsp; www.JJSmithOnline.com &nbsp;&middot;&nbsp; @JJSmithOnline.com</p>
+      {/* ===== SITE FOOTER ===== */}
+      {/* id is what the sticky bar watches: it stands down once this is in view */}
+      <footer className="sitefoot" id="hf-footer">
+        <div className="wrap">
+          <p className="sf-fda">*The statements made on this website have not been evaluated by the FDA (U.S. Food and Drug Administration). The products sold on this website are not intended to diagnose, treat, cure or prevent any disease. The information provided by this website or this company is not a substitute for face-to-face consultation with your physician and should not be construed as individual medical advice. If you have any concerns, please consult your doctor or healthcare professional at all times.</p>
+          <p className="sf-fine">Reviews and photos are from verified buyers on JJSmithOnline.com, plus one comment from Facebook. Individual results vary.</p>
+          <p className="sf-fine">To request a refund, email <a href="mailto:support@jjsmithonline.com">support@jjsmithonline.com</a> within 60 days of purchase.</p>
+
+          <div className="sf-main">
+            <div className="sf-co">
+              <a className="sf-logo" href="https://www.jjsmithonline.com" target="_blank" rel="noopener noreferrer">
+                <img src={imgJjSmithLogo} width="132" height="25" alt="JJ Smith" loading="lazy" decoding="async" />
+              </a>
+              <p className="sf-addr">
+                &copy; JJ Smith. All Rights Reserved.<br />
+                Adiva Publishing<br />
+                12138 Central Ave Suite 391, Mitchville, MD 20721<br />
+                <a href="tel:+12025585543">(202) 558-5543</a>
+              </p>
+            </div>
+
+            <div className="sf-right">
+              <ul className="sf-social">
+                <li><a href="https://www.facebook.com/RealTalkJJ/" target="_blank" rel="noopener noreferrer" aria-label="JJ Smith on Facebook">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg>
+                </a></li>
+                <li><a href="https://twitter.com/JJSmithOnline" target="_blank" rel="noopener noreferrer" aria-label="JJ Smith on X, formerly Twitter">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 3h3.6l4.7 6.3L17.8 3H21l-7 8.1L21.4 21h-3.6l-5-6.7L6.7 21H3.4l7.3-8.4z" /></svg>
+                </a></li>
+                <li><a href="https://www.instagram.com/jjsmithonline/" target="_blank" rel="noopener noreferrer" aria-label="JJ Smith on Instagram">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" /></svg>
+                </a></li>
+              </ul>
+              <ul className="sf-links">
+                <li><a href="https://www.jjsmithonline.com/contact-us/" target="_blank" rel="noopener noreferrer">Contact Us</a></li>
+                <li><a href="https://www.jjsmithonline.com/terms-conditions/" target="_blank" rel="noopener noreferrer">Terms &amp; Conditions</a></li>
+                <li><a href="https://www.jjsmithonline.com/privacy-policy/" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
+                <li><a href="https://www.jjsmithonline.com/terms-conditions/#r-policy" target="_blank" rel="noopener noreferrer">Refund Policy</a></li>
+              </ul>
+            </div>
+          </div>
         </div>
       </footer>
 

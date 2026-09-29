@@ -707,12 +707,31 @@ img { max-width: 100%; height: auto; display: block; }
 .vid-close:hover { background: rgba(36, 31, 46, .85); }
 
 /* ---- guarantee ---------------------------------------------------------- */
-.guarantee { display: grid; grid-template-columns: clamp(150px, 17vw, 210px) minmax(0, 1fr); gap: clamp(24px, 3.4vw, 48px); align-items: center; }
-.guarantee img { width: 100%; filter: drop-shadow(0 18px 26px rgba(0, 0, 0, .3)); }
-@media (max-width: 720px) {
-  .guarantee { grid-template-columns: 1fr; justify-items: center; text-align: center; }
-  .guarantee img { max-width: 168px; }
+/* Centred at every width now that the copy is three short lines: a badge
+   beside a column of text left a lot of empty space to its right. */
+.guarantee {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: clamp(11px, 1.3vw, 15px);
 }
+/* a lighter shadow: the heavy drop shadow muddied the badge against teal */
+.guarantee img { width: clamp(108px, 11vw, 134px); height: auto; filter: drop-shadow(0 8px 14px rgba(0, 0, 0, .18)); }
+.guarantee .stack-s { align-items: center; gap: 10px; }
+.guarantee .body { max-width: 44ch; }
+/* one line on desktop, two balanced ones on a phone */
+.guarantee .h2 { text-wrap: balance; }
+
+/* The reference button is a purple gradient on a light band. Against this
+   teal it would sit too close in value, so the fill and the text swap: white
+   plate, purple label. */
+.gt-cta {
+  background: var(--white); color: var(--purple);
+  box-shadow: 0 16px 34px -14px rgba(0, 0, 0, .45);
+  padding: 17px clamp(26px, 3vw, 34px); min-height: 0;
+}
+.gt-cta:hover { background: var(--white); color: var(--purple); filter: none; box-shadow: 0 22px 44px -16px rgba(0, 0, 0, .5); }
+.gt-cta:focus-visible { outline: 3px solid #FFFFFF; outline-offset: 4px; }
+
+.gt-fine { font-size: 13px; line-height: 1.5; color: var(--teal-ink); }
 
 /* ---- FAQ accordion, after the one on JJ's coaching page ---------------- */
 .faqlist { max-width: 760px; margin: clamp(26px, 3vw, 38px) auto 0; text-align: left; }
@@ -758,8 +777,6 @@ img { max-width: 100%; height: auto; display: block; }
 @media (max-width: 700px) { .stickybar .sb-more { display: none; } }
 @media (prefers-reduced-motion: reduce) { .stickybar { transition: none; } }
 
-/* keep the bar off the last line of the footnotes */
-.footnotes { padding-bottom: calc(clamp(26px, 3.4vw, 40px) + 82px); }
 
 /* ---- focus ------------------------------------------------------------- */
 a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outline-offset: 3px; border-radius: 14px; }
@@ -1419,4 +1436,73 @@ a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outl
   .ok-tag { padding: 4px 9px 4px 8px; gap: 5px; }
   .ok-tag-t { font-size: 10px; }
   .ok-tag img { height: 13px; }
+}
+
+/* ---- site footer ------------------------------------------------------ */
+
+.sitefoot {
+  background: var(--purple); color: #FFFFFF;
+  padding: clamp(32px, 4vw, 52px) 0 clamp(30px, 3.6vw, 46px);
+}
+.sf-fda {
+  font-size: 13px; line-height: 1.65; color: rgba(255, 255, 255, .72);
+  margin: 0 0 9px;
+}
+.sf-fine {
+  font-size: 13px; line-height: 1.65; color: rgba(255, 255, 255, .72); margin: 0 0 9px;
+}
+.sf-fine:last-of-type { margin-bottom: clamp(24px, 3vw, 34px); }
+.sf-fine a { color: rgba(255, 255, 255, .92); text-decoration: underline; text-underline-offset: 3px; }
+.sf-fine a:hover { color: #FFFFFF; }
+
+.sf-main {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: clamp(22px, 3vw, 44px); flex-wrap: wrap;
+  padding-top: clamp(20px, 2.4vw, 28px); border-top: 1px solid rgba(255, 255, 255, .22);
+}
+.sf-co { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.sf-logo { display: inline-block; border-radius: 6px; }
+/* the logo is dark on light, so it needs to invert onto the purple */
+.sf-logo img { height: 25px; width: auto; display: block; filter: brightness(0) invert(1); opacity: .95; }
+.sf-addr { margin: 0; font-size: var(--small); line-height: 1.7; color: rgba(255, 255, 255, .82); }
+
+.sf-right { display: flex; flex-direction: column; align-items: flex-end; gap: 16px; }
+
+.sf-social { list-style: none; display: flex; gap: 10px; margin: 0; padding: 0; }
+.sf-social a {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 999px; color: #FFFFFF;
+  border: 1.5px solid rgba(255, 255, 255, .38);
+  transition: background .16s ease, border-color .16s ease, transform .16s ease;
+}
+.sf-social a:hover { background: rgba(255, 255, 255, .14); border-color: #FFFFFF; transform: translateY(-1px); }
+
+.sf-links {
+  list-style: none; display: flex; flex-wrap: wrap; justify-content: flex-end;
+  gap: 4px 20px; margin: 0; padding: 0;
+}
+.sf-links a, .sf-addr a {
+  display: inline-flex; align-items: center; min-height: 44px;
+  font-size: var(--small); font-weight: 600; color: rgba(255, 255, 255, .88);
+  text-decoration: none;
+}
+.sf-addr a { min-height: 0; }
+.sf-links a:hover, .sf-addr a:hover { color: #FFFFFF; text-decoration: underline; text-underline-offset: 3px; }
+.sitefoot a:focus-visible { outline: 3px solid #FFFFFF; outline-offset: 3px; border-radius: 6px; }
+
+@media (max-width: 760px) {
+  .sf-main { flex-direction: column; align-items: center; text-align: center; }
+  .sf-co { align-items: center; }
+  .sf-right { align-items: center; }
+  .sf-links { justify-content: center; gap: 0 18px; }
+  .sf-fda { text-align: left; }
+}
+
+/* the guarantee is three short centred lines now, so it needs less band */
+.band-teal:has(.guarantee) { padding-block: clamp(24px, 2.8vw, 36px); }
+
+@media (max-width: 760px) {
+  /* "60-DAY HAPPINESS" over "guarantee" reads better than breaking after
+     "60-DAY", which is what balance alone does at this width */
+  .guarantee .h2 em { display: block; margin-top: 2px; }
 }
