@@ -1,3 +1,4 @@
+import "@/styles.css";
 import { useEffect, useRef, useState } from "react";
 
 import { initVideos } from "@/lib/videos";
@@ -6,51 +7,53 @@ import { initStickyBar } from "@/lib/sticky";
 import { applyOffers } from "@/lib/offers";
 import { initTracking } from "@/lib/tracking";
 import { HF_OFFERS, PROTOCOL_CHECKOUT_HREF } from "@/lib/offer-urls";
-import Reviews from "@/components/reviews";
+import { lazy, Suspense } from "react";
+const Reviews = lazy(() => import("@/components/reviews"));
 import { useReviewStats } from "@/lib/use-review-stats";
+import { trackReviewsClick } from "@/lib/track";
+import okendoLogo from "@/assets/img/okendo-logo.webp";
 
-import imgFbReview from "@/assets/img/fb-review.jpg";
-import imgHeroBottle from "@/assets/img/hero-bottle.png";
-import imgIngredientsBottle from "@/assets/img/ingredients-bottle.png";
-import imgJjLifestyle from "@/assets/img/jj-lifestyle.jpg";
-import imgJjSmithLogo from "@/assets/img/jj-smith-logo.png";
-import imgMoneyBackBadge from "@/assets/img/money-back-badge.png";
-import imgOffer1Bottle from "@/assets/img/hf-1-bottle-product-image.png";
-import imgKitPng from "@/assets/img/hf-protocol-image.png";
+import imgFbReview from "@/assets/img/fb-review.webp";
+import imgHeroBottle from "@/assets/img/hero-bottle.webp";
+import imgIngredientsBottle from "@/assets/img/ingredients-bottle.webp";
+import imgJjLifestyle from "@/assets/img/jj-lifestyle.webp";
+import imgJjSmithLogo from "@/assets/img/jj-smith-logo.webp";
+import imgMoneyBackBadge from "@/assets/img/money-back-badge.webp";
+import imgOffer1Bottle from "@/assets/img/hf-1-bottle-product-image.webp";
 import imgKit512 from "@/assets/img/hf-protocol-image-512w.webp";
 import imgKit768 from "@/assets/img/hf-protocol-image-768w.webp";
 import imgKit1024 from "@/assets/img/hf-protocol-image-1024w.webp";
-import imgPartnersDroz from "@/assets/img/partners/droz.png";
-import imgPartnersEssence from "@/assets/img/partners/essence.png";
-import imgPartnersFox from "@/assets/img/partners/fox.png";
-import imgPartnersNbc from "@/assets/img/partners/nbc.png";
-import imgPartnersNytimes from "@/assets/img/partners/nytimes.png";
-import imgPartnersSteveharvey from "@/assets/img/partners/steveharvey.png";
-import imgPartnersTheview from "@/assets/img/partners/theview.png";
-import imgPartnersWomansworld from "@/assets/img/partners/womansworld.png";
-import imgSelfie1 from "@/assets/img/selfie-1.jpg";
-import imgSelfie10 from "@/assets/img/selfie-10.jpg";
-import imgSelfie11 from "@/assets/img/selfie-11.jpg";
-import imgSelfie12 from "@/assets/img/selfie-12.jpg";
-import imgSelfie2 from "@/assets/img/selfie-2.jpg";
-import imgSelfie3 from "@/assets/img/selfie-3.jpg";
-import imgSelfie4 from "@/assets/img/selfie-4.jpg";
-import imgSelfie5 from "@/assets/img/selfie-5.jpg";
-import imgSelfie6 from "@/assets/img/selfie-6.jpg";
-import imgSelfie7 from "@/assets/img/selfie-7.jpg";
-import imgSelfie8 from "@/assets/img/selfie-8.jpg";
-import imgSelfie9 from "@/assets/img/selfie-9.jpg";
-import imgVideoV1 from "@/assets/img/video/v1.jpg";
-import imgVideoV2 from "@/assets/img/video/v2.jpg";
-import imgVideoV3 from "@/assets/img/video/v3.jpg";
-import imgVideoV4 from "@/assets/img/video/v4.jpg";
-import imgVideoV5 from "@/assets/img/video/v5.jpg";
-import imgVideoV6 from "@/assets/img/video/v6.jpg";
-import imgVideoV7 from "@/assets/img/video/v7.jpg";
-import imgVideoV8 from "@/assets/img/video/v8.jpg";
-import imgVideoV9 from "@/assets/img/video/v9.jpg";
-import imgWomanProblem from "@/assets/img/woman-problem.png";
-import imgWomanSteps from "@/assets/img/woman-steps.jpg";
+import imgPartnersDroz from "@/assets/img/partners/droz.webp";
+import imgPartnersEssence from "@/assets/img/partners/essence.webp";
+import imgPartnersFox from "@/assets/img/partners/fox.webp";
+import imgPartnersNbc from "@/assets/img/partners/nbc.webp";
+import imgPartnersNytimes from "@/assets/img/partners/nytimes.webp";
+import imgPartnersSteveharvey from "@/assets/img/partners/steveharvey.webp";
+import imgPartnersTheview from "@/assets/img/partners/theview.webp";
+import imgPartnersWomansworld from "@/assets/img/partners/womansworld.webp";
+import imgSelfie1 from "@/assets/img/selfie-1.webp";
+import imgSelfie10 from "@/assets/img/selfie-10.webp";
+import imgSelfie11 from "@/assets/img/selfie-11.webp";
+import imgSelfie12 from "@/assets/img/selfie-12.webp";
+import imgSelfie2 from "@/assets/img/selfie-2.webp";
+import imgSelfie3 from "@/assets/img/selfie-3.webp";
+import imgSelfie4 from "@/assets/img/selfie-4.webp";
+import imgSelfie5 from "@/assets/img/selfie-5.webp";
+import imgSelfie6 from "@/assets/img/selfie-6.webp";
+import imgSelfie7 from "@/assets/img/selfie-7.webp";
+import imgSelfie8 from "@/assets/img/selfie-8.webp";
+import imgSelfie9 from "@/assets/img/selfie-9.webp";
+import imgVideoV1 from "@/assets/img/video/v1.webp";
+import imgVideoV2 from "@/assets/img/video/v2.webp";
+import imgVideoV3 from "@/assets/img/video/v3.webp";
+import imgVideoV4 from "@/assets/img/video/v4.webp";
+import imgVideoV5 from "@/assets/img/video/v5.webp";
+import imgVideoV6 from "@/assets/img/video/v6.webp";
+import imgVideoV7 from "@/assets/img/video/v7.webp";
+import imgVideoV8 from "@/assets/img/video/v8.webp";
+import imgVideoV9 from "@/assets/img/video/v9.webp";
+import imgWomanProblem from "@/assets/img/woman-problem.webp";
+import imgWomanSteps from "@/assets/img/woman-steps.webp";
 
 // StrictMode runs effects twice in development. The scripts below bind
 // document-level listeners, so a second pass would animate the offer scroll
@@ -83,7 +86,7 @@ const PROTOCOL: {
   ctaLabel: "Get the 60-Day Kit",
   // Auto-applied at checkout on this offer only. Change it here.
   discountCode: "HF60FREESHIP",
-  image: imgKitPng,
+  image: imgKit1024,
   price: "$74.99",
   perDay: "$1.25 a day",
   stack: [
@@ -110,6 +113,39 @@ const PROTOCOL_HREF = (() => {
 // $99.98 keeps its cents, a round $40 does not.
 const money = (n: number) =>
   "$" + (Number.isInteger(n) ? String(n) : n.toFixed(2));
+
+
+// Provenance, not a purchase claim: this says who collected and vetted the
+// reviews, which is true of all 171. The per-review "Verified buyer" badge in
+// the reviews section is the one that speaks to individual purchases.
+function OkendoTag() {
+  return (
+    <span className="ok-tag">
+      <span className="ok-tag-t">Verified by</span>
+      <img src={okendoLogo} width="315" height="68" alt="Okendo" loading="lazy" decoding="async" />
+    </span>
+  );
+}
+
+// The clickable half of every rating mention, shared so the three can never
+// disagree. Long form on desktop, short on a phone, both on the same live
+// Okendo figures as the reviews section. The arrow is the one from the CTA
+// buttons, so the affordance reads the same everywhere.
+function RatingCount({ total }: { total: number }) {
+  return (
+    <>
+      <span className="rl-dot" aria-hidden="true">&middot;</span>
+      {/* Not "verified reviews": Okendo marks 37 of the 171 as verified
+          buyers, so the whole count cannot carry that claim. The per-review
+          badge in the reviews section still marks the ones that are. */}
+      <span className="rl-read">Read {total} reviews</span>
+      <svg className="rl-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M5 12h13" /><path d="M12 5l7 7-7 7" />
+      </svg>
+    </>
+  );
+}
 
 // The one-bottle card's two options, and everything that changes with them:
 // the copy, the figures, the button, and which Shopify destination it points
@@ -190,7 +226,6 @@ export default function HormoneFocusLanding() {
 
   return (
     <>
-      <style>{CSS}</style>
 
       {/* ===== ANNOUNCEMENT ===== */}
       <div className="announce">
@@ -203,7 +238,7 @@ export default function HormoneFocusLanding() {
       {/* ===== MASTHEAD ===== */}
       <header className="masthead">
         <div className="wrap masthead-in">
-          <img src={imgJjSmithLogo} alt="JJ Smith" className="logo" />
+          <img src={imgJjSmithLogo} alt="JJ Smith" className="logo" width="132" height="25" />
           <a className="masthead-cta" href="#offer">Get Hormone Focus</a>
         </div>
       </header>
@@ -215,7 +250,8 @@ export default function HormoneFocusLanding() {
         <div className="wrap hero-grid">
 
           <div className="stack hero-copy">
-            <div className="badge">
+            <a className="badge rating-link" href="#reviews" aria-label="Read all customer reviews"
+               onClick={() => trackReviewsClick("hero")}>
               <span className="avatars">
                 <img src={imgSelfie3} alt="" loading="lazy" width="300" height="468" />
                 <img src={imgSelfie5} alt="" loading="lazy" width="300" height="468" />
@@ -230,8 +266,8 @@ export default function HormoneFocusLanding() {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="#E8B84B"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
               </span>
               <b>{rating.average.toFixed(1)}</b>
-              <span className="badge-t">from {rating.total} verified reviews</span>
-            </div>
+              <RatingCount total={rating.total} />
+            </a>
 
             <div className="stack-s">
               <h1 className="h1"><span className="grp"><span className="hl">Feel Like</span> <em>Yourself</em> <span className="hl">Again.</span></span> <span className="grp">Fewer Hot Flashes.</span> <span className="grp">Better Sleep.</span> <span className="grp">Less Stubborn Belly.</span></h1>
@@ -254,7 +290,7 @@ export default function HormoneFocusLanding() {
           </div>
 
         </div>
-        <img className="hero-shot" src={imgHeroBottle} width="683" height="800" alt="Hormone Focus, held in the hand" />
+        <img className="hero-shot" src={imgHeroBottle} width="683" height="800" alt="Hormone Focus, held in the hand" fetchPriority="high" decoding="async" />
         </div>
 
         {/* press logos and customer photos ride inside the hero: on a phone
@@ -293,22 +329,22 @@ export default function HormoneFocusLanding() {
         <div className="press">
           <div className="marquee">
           <div className="marquee-track">
-                <img src={imgPartnersNytimes} alt="" loading="lazy" />
-                <img src={imgPartnersDroz} alt="" loading="lazy" />
-                <img src={imgPartnersTheview} alt="" loading="lazy" />
-                <img src={imgPartnersSteveharvey} alt="" loading="lazy" />
-                <img src={imgPartnersNbc} alt="" loading="lazy" />
-                <img src={imgPartnersFox} alt="" loading="lazy" />
-                <img src={imgPartnersEssence} alt="" loading="lazy" />
-                <img src={imgPartnersWomansworld} alt="" loading="lazy" />
-                <img src={imgPartnersNytimes} alt="" loading="lazy" />
-                <img src={imgPartnersDroz} alt="" loading="lazy" />
-                <img src={imgPartnersTheview} alt="" loading="lazy" />
-                <img src={imgPartnersSteveharvey} alt="" loading="lazy" />
-                <img src={imgPartnersNbc} alt="" loading="lazy" />
-                <img src={imgPartnersFox} alt="" loading="lazy" />
-                <img src={imgPartnersEssence} alt="" loading="lazy" />
-                <img src={imgPartnersWomansworld} alt="" loading="lazy" />
+                <img src={imgPartnersNytimes} alt="" loading="lazy" width="206" height="70" />
+                <img src={imgPartnersDroz} alt="" loading="lazy" width="62" height="70" />
+                <img src={imgPartnersTheview} alt="" loading="lazy" width="86" height="70" />
+                <img src={imgPartnersSteveharvey} alt="" loading="lazy" width="103" height="70" />
+                <img src={imgPartnersNbc} alt="" loading="lazy" width="48" height="70" />
+                <img src={imgPartnersFox} alt="" loading="lazy" width="66" height="70" />
+                <img src={imgPartnersEssence} alt="" loading="lazy" width="113" height="70" />
+                <img src={imgPartnersWomansworld} alt="" loading="lazy" width="77" height="70" />
+                <img src={imgPartnersNytimes} alt="" loading="lazy" width="206" height="70" />
+                <img src={imgPartnersDroz} alt="" loading="lazy" width="62" height="70" />
+                <img src={imgPartnersTheview} alt="" loading="lazy" width="86" height="70" />
+                <img src={imgPartnersSteveharvey} alt="" loading="lazy" width="103" height="70" />
+                <img src={imgPartnersNbc} alt="" loading="lazy" width="48" height="70" />
+                <img src={imgPartnersFox} alt="" loading="lazy" width="66" height="70" />
+                <img src={imgPartnersEssence} alt="" loading="lazy" width="113" height="70" />
+                <img src={imgPartnersWomansworld} alt="" loading="lazy" width="77" height="70" />
           </div>
         </div>
         </div>
@@ -398,7 +434,9 @@ export default function HormoneFocusLanding() {
         <div className="wrap stack">
           <div className="stack-s">
             <h2 className="h2 h2-split">JOIN THE WOMEN WHO STOPPED FIGHTING IT <em>one symptom at a time</em></h2>
-            <div className="rating">
+            <div className="rating-row">
+            <a className="rating rating-link" href="#reviews" aria-label="Read all customer reviews"
+               onClick={() => trackReviewsClick("social_proof")}>
               <span className="stars">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="#E8B84B"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="#E8B84B"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
@@ -407,7 +445,9 @@ export default function HormoneFocusLanding() {
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="#E8B84B"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
               </span>
               <b>{rating.average.toFixed(1)}</b>
-              <span className="small">from {rating.total} verified reviews</span>
+              <RatingCount total={rating.total} />
+            </a>
+            <OkendoTag />
             </div>
           </div>
 
@@ -423,69 +463,96 @@ export default function HormoneFocusLanding() {
           <div className="proof-split">
             <div className="grid grid-2 reviews">
               <div className="card card-soft">
-                <p className="body" style={{ color: "var(--ink)" }}>&ldquo;My hot flashes are gone, my period is balance now. If you are experiencing menopause or PCOS then Hormone Focus is for you.&rdquo;</p>
-                <div className="rev-by"><img className="rev-av" src={imgSelfie1} alt="" loading="lazy" width="300" height="468" /><span className="micro">verified buyer &nbsp;&middot;&nbsp; Jun 2025</span></div>
+                <p className="body" style={{ color: "var(--ink)" }}>&ldquo;It&rsquo;s so AMAZING has given me my life back!&rdquo;</p>
+                <div className="rev-by">
+                  <img className="rev-av" src={imgSelfie1} alt="" loading="lazy" width="300" height="468" />
+                  <span className="rev-who"><span className="rev-name">Anita F.</span><span className="rev-vb"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5" /></svg>Verified buyer</span></span>
+                </div>
               </div>
               <div className="card card-soft">
-                <p className="body" style={{ color: "var(--ink)" }}>&ldquo;I feel normal again! I write this a bit teary eyed. The last few years have been tough... the first night I was able to sleep.&rdquo;</p>
-                <div className="rev-by"><img className="rev-av" src={imgSelfie2} alt="" loading="lazy" width="300" height="468" /><span className="micro">verified buyer &nbsp;&middot;&nbsp; Jul 2025</span></div>
+                <p className="body" style={{ color: "var(--ink)" }}>&ldquo;I started taking Hormone Focus and all I can say is I had immediate relief in many areas. My hot flashes started to fade; I could sleep through the night and my brain fog is slowly recovering. I have all 3 in the plan and I&rsquo;m so thankful for this product! I&rsquo;m starting to feel like myself again. Thanks JJ!!!!!!&rdquo;</p>
+                <div className="rev-by">
+                  <img className="rev-av" src={imgSelfie2} alt="" loading="lazy" width="300" height="468" />
+                  <span className="rev-who"><span className="rev-name">Katina S.</span><span className="rev-vb"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5" /></svg>Verified buyer</span></span>
+                </div>
               </div>
               <div className="card card-soft">
-                <p className="body" style={{ color: "var(--ink)" }}>&ldquo;By Day 6 or 7, my hot flashes and night sweats were gone! And bye bye bloated stomach! This is the only thing that has worked for me.&rdquo;</p>
-                <div className="rev-by"><img className="rev-av" src={imgSelfie3} alt="" loading="lazy" width="300" height="468" /><span className="micro">verified buyer &nbsp;&middot;&nbsp; Apr 2024</span></div>
+                <p className="body" style={{ color: "var(--ink)" }}>&ldquo;I have been using the Hormone Focus bundle for almost 2 months. The best way to describe how I feel, I believe only women who are going through it will understand, I feel normal again! I write this a bit teary eyed. The last few years have been tough. My menopause symptoms included anxiety. I felt like fear had me in a choke hold. After I received the bundle, I kid you not, the first night I was able to sleep and wake up the next morning feeling rested. My hot flashes and night sweats became less. My mood has improved and the anxious thoughts and feeling gone. This has been a game changer for my relationship with my husband as well.&rdquo;</p>
+                <div className="rev-by">
+                  <img className="rev-av" src={imgSelfie3} alt="" loading="lazy" width="300" height="468" />
+                  <span className="rev-who"><span className="rev-name">Adrienne</span><span className="rev-vb"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5" /></svg>Verified buyer</span></span>
+                </div>
               </div>
               <div className="card card-soft">
-                <p className="body" style={{ color: "var(--ink)" }}>&ldquo;I&rsquo;m in my mid-40s and these peri-menopausal symptoms are just about gone! Sleep is better, moods better; the scale is moving again, and that makes me so happy!&rdquo;</p>
-                <div className="rev-by"><img className="rev-av" src={imgSelfie4} alt="" loading="lazy" width="300" height="468" /><span className="micro">verified buyer &nbsp;&middot;&nbsp; Apr 2024</span></div>
+                <p className="body" style={{ color: "var(--ink)" }}>&ldquo;This has made a tremendous change in my perimenopause symptoms... I sleep better, no night sweat, mood is great and less flashes! Fast results.&rdquo;</p>
+                <div className="rev-by">
+                  <img className="rev-av" src={imgSelfie4} alt="" loading="lazy" width="300" height="468" />
+                  <span className="rev-who"><span className="rev-name">Roslind</span><span className="rev-vb"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5" /></svg>Verified buyer</span></span>
+                </div>
               </div>
             </div>
-            <figure className="fb-shot fb-desk">
+            <figure className="fb-shot fb-proof">
               <img src={imgFbReview} width="900" height="649" loading="lazy" alt="Facebook comment from Martinez Sullivan: this is a game changer, I have literally shed some inches and lbs, not to mention the hot flashes are gone when I take it" />
             </figure>
           </div>
 
+          {/* Straight into the full set of reviews, before the videos */}
+          <a className="proof-cta" href="#reviews" onClick={() => trackReviewsClick("social_proof_cta")}>
+            <span className="proof-cta-l">Read more real customer stories and testimonials</span>
+            <span className="proof-cta-s">
+              <span className="stars">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#E8B84B" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#E8B84B" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#E8B84B" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#E8B84B" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#E8B84B" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
+              </span>
+              {rating.average.toFixed(1)} from {rating.total} reviews
+            </span>
+            <OkendoTag />
+            <svg className="proof-cta-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h13" /><path d="M12 5l7 7-7 7" /></svg>
+          </a>
+
           {/* What people are saying, straight from JJ's product page */}
           <div className="vids">
-            <button className="vids-nav vids-prev" type="button" aria-label="Previous videos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg></button>
             <div className="vids-track">
               <div className="vid" data-vimeo="948965910" data-h="92f77779fc">
-                <img src={imgVideoV1} alt="" loading="lazy" />
+                <img src={imgVideoV1} alt="" loading="lazy" width="520" height="924" />
                 <button className="vid-play" type="button" aria-label="Play video testimonial 1"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.2v13.6a1 1 0 0 0 1.53.85l10.6-6.8a1 1 0 0 0 0-1.7L9.53 4.35A1 1 0 0 0 8 5.2z" /></svg></button>
               </div>
               <div className="vid" data-vimeo="948966113" data-h="f3208c6af4">
-                <img src={imgVideoV2} alt="" loading="lazy" />
+                <img src={imgVideoV2} alt="" loading="lazy" width="520" height="924" />
                 <button className="vid-play" type="button" aria-label="Play video testimonial 2"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.2v13.6a1 1 0 0 0 1.53.85l10.6-6.8a1 1 0 0 0 0-1.7L9.53 4.35A1 1 0 0 0 8 5.2z" /></svg></button>
               </div>
               <div className="vid" data-vimeo="948966175" data-h="1b5b185021">
-                <img src={imgVideoV3} alt="" loading="lazy" />
+                <img src={imgVideoV3} alt="" loading="lazy" width="520" height="924" />
                 <button className="vid-play" type="button" aria-label="Play video testimonial 3"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.2v13.6a1 1 0 0 0 1.53.85l10.6-6.8a1 1 0 0 0 0-1.7L9.53 4.35A1 1 0 0 0 8 5.2z" /></svg></button>
               </div>
               <div className="vid" data-vimeo="948966221" data-h="e9d03a3138">
-                <img src={imgVideoV4} alt="" loading="lazy" />
+                <img src={imgVideoV4} alt="" loading="lazy" width="520" height="924" />
                 <button className="vid-play" type="button" aria-label="Play video testimonial 4"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.2v13.6a1 1 0 0 0 1.53.85l10.6-6.8a1 1 0 0 0 0-1.7L9.53 4.35A1 1 0 0 0 8 5.2z" /></svg></button>
               </div>
               <div className="vid" data-vimeo="948966260" data-h="24b0393551">
-                <img src={imgVideoV5} alt="" loading="lazy" />
+                <img src={imgVideoV5} alt="" loading="lazy" width="520" height="924" />
                 <button className="vid-play" type="button" aria-label="Play video testimonial 5"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.2v13.6a1 1 0 0 0 1.53.85l10.6-6.8a1 1 0 0 0 0-1.7L9.53 4.35A1 1 0 0 0 8 5.2z" /></svg></button>
               </div>
               <div className="vid" data-vimeo="948966331" data-h="f36ce92619">
-                <img src={imgVideoV6} alt="" loading="lazy" />
+                <img src={imgVideoV6} alt="" loading="lazy" width="520" height="924" />
                 <button className="vid-play" type="button" aria-label="Play video testimonial 6"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.2v13.6a1 1 0 0 0 1.53.85l10.6-6.8a1 1 0 0 0 0-1.7L9.53 4.35A1 1 0 0 0 8 5.2z" /></svg></button>
               </div>
               <div className="vid" data-vimeo="948966385" data-h="62d3de5dd3">
-                <img src={imgVideoV7} alt="" loading="lazy" />
+                <img src={imgVideoV7} alt="" loading="lazy" width="520" height="924" />
                 <button className="vid-play" type="button" aria-label="Play video testimonial 7"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.2v13.6a1 1 0 0 0 1.53.85l10.6-6.8a1 1 0 0 0 0-1.7L9.53 4.35A1 1 0 0 0 8 5.2z" /></svg></button>
               </div>
               <div className="vid" data-vimeo="948966430" data-h="c476465217">
-                <img src={imgVideoV8} alt="" loading="lazy" />
+                <img src={imgVideoV8} alt="" loading="lazy" width="520" height="924" />
                 <button className="vid-play" type="button" aria-label="Play video testimonial 8"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.2v13.6a1 1 0 0 0 1.53.85l10.6-6.8a1 1 0 0 0 0-1.7L9.53 4.35A1 1 0 0 0 8 5.2z" /></svg></button>
               </div>
               <div className="vid" data-vimeo="948966468" data-h="7bcd8e816d">
-                <img src={imgVideoV9} alt="" loading="lazy" />
+                <img src={imgVideoV9} alt="" loading="lazy" width="520" height="924" />
                 <button className="vid-play" type="button" aria-label="Play video testimonial 9"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.2v13.6a1 1 0 0 0 1.53.85l10.6-6.8a1 1 0 0 0 0-1.7L9.53 4.35A1 1 0 0 0 8 5.2z" /></svg></button>
               </div>
             </div>
-            <button className="vids-nav vids-next" type="button" aria-label="More videos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg></button>
           </div>
 
           <p className="micro">Reviews, photos and videos from verified buyers on JJSmithOnline.com, and a comment from Facebook. Individual results vary.</p>
@@ -529,7 +596,7 @@ export default function HormoneFocusLanding() {
               </div>
               <svg className="ing-arrow" viewBox="0 0 72 40" fill="none" aria-hidden="true"><path d="M4 30 C 22 31, 40 26, 58 14" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" /><path d="M58 14 l -6.2 10.3 M58 14 l -11.9 1.9" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" /></svg>
             </div>
-              <img className="ing-bottle" src={imgIngredientsBottle} width="480" height="786" alt="Hormone Focus" />
+              <img className="ing-bottle" src={imgIngredientsBottle} width="480" height="786" loading="lazy" decoding="async" alt="Hormone Focus" />
             <div className="ing-node ing-b">
               <div className="ing-card">
                 <span className="ing-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.4" /><path d="M12 3.6v16.8M3.6 12h16.8M6.1 6.1l11.8 11.8M17.9 6.1 6.1 17.9" /></svg></span>
@@ -639,7 +706,8 @@ export default function HormoneFocusLanding() {
             <p className="body">Three ingredients, every milligram printed. Two capsules with a meal. Sixty days of guarantee on up to two bottles, so the risk sits with us, not with you.</p>
           </div>
           <div className="stack-s" style={{ alignItems: "center", textAlign: "center" }}>
-            <div className="rating" style={{ justifyContent: "center" }}>
+            <a className="rating rating-link rating-on-teal" href="#reviews" style={{ justifyContent: "center" }}
+               aria-label="Read all customer reviews" onClick={() => trackReviewsClick("closer")}>
               <span className="stars">
                 <svg width="19" height="19" viewBox="0 0 24 24" fill="#F3CE73"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
                 <svg width="19" height="19" viewBox="0 0 24 24" fill="#F3CE73"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
@@ -648,8 +716,8 @@ export default function HormoneFocusLanding() {
                 <svg width="19" height="19" viewBox="0 0 24 24" fill="#F3CE73"><path d="M12 2l3 6.6 7 .8-5.2 4.9 1.4 7L12 17.8 5.8 21.3l1.4-7L2 9.4l7-.8z" /></svg>
               </span>
               <b style={{ color: "#FFFFFF" }}>{rating.average.toFixed(1)}</b>
-              <span className="micro">from {rating.total} verified reviews</span>
-            </div>
+              <RatingCount total={rating.total} />
+            </a>
             <a className="btn btn-light" href="#offer" style={{ borderRadius: "999px" }}>
               Get Hormone Focus
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h13" /><path d="M12 5l7 7-7 7" /></svg>
@@ -692,6 +760,8 @@ export default function HormoneFocusLanding() {
                     src={PROTOCOL.image}
                     width="1024"
                     height="768"
+                    loading="lazy"
+                    decoding="async"
                     alt={`${PROTOCOL.planName}: 2 bottles of Hormone Focus, The 60-Day Hormone Fix eBook, Hormone Healthy Recipes eBook and Daily Symptom Tracker`}
                   />
                 </picture>
@@ -758,7 +828,7 @@ export default function HormoneFocusLanding() {
               <div className="offer offer-quiet">
 
                 <div className="offer-head">
-                  <div className="offer-shots"><img src={imgOffer1Bottle} alt="Hormone Focus, one bottle" /></div>
+                  <div className="offer-shots"><img src={imgOffer1Bottle} width="800" height="800" loading="lazy" decoding="async" alt="Hormone Focus, one bottle" /></div>
                   <div className="offer-main">
                     <div className="offer-name">30-Day Supply</div>
                     <div className="offer-supply">One bottle of Hormone Focus. 60 capsules, two a day.</div>
@@ -919,7 +989,7 @@ export default function HormoneFocusLanding() {
       </section>
 
       {/* ===== REVIEWS (live, from Okendo) ===== */}
-      <Reviews />
+      <Suspense fallback={null}><Reviews /></Suspense>
 
       {/* ===== SIGN-OFF ===== */}
       <section className="band band-white">
@@ -949,1257 +1019,10 @@ export default function HormoneFocusLanding() {
 
       <div className="stickybar" id="hf-sticky" aria-hidden="true">
         <div className="wrap">
-          <p className="sb-copy">From <b>$1.33 a day</b><span className="sb-more"><br />60-day money-back guarantee</span></p>
+          <p className="sb-copy">From <b>$1.25 a day</b><span className="sb-more"><br />60-day money-back guarantee</span></p>
           <a className="btn btn-primary" href="#offer">Get Hormone Focus <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h13" /><path d="M12 5l7 7-7 7" /></svg></a>
         </div>
       </div>
     </>
   );
 }
-
-const CSS = `
-/* ===========================================================================
-   Hormone Focus - bridge landing page
-
-   One responsive layout. It used to be two fixed-width artboards, mobile and
-   desktop, carrying the same copy twice; headlines built out of flex rows
-   broke as soon as they wrapped. Everything below is one document with a
-   fluid type scale, so a headline is a headline at every width.
-   =========================================================================== */
-
-:root {
-  color-scheme: light;
-
-  --ink:        #241F2E;
-  --ink-soft:   #4C4658;
-  --muted:      #6E687C;
-
-  --teal:       #276F6C;
-  --teal-ink:   #DCEDEC;
-  --teal-line:  #4A8B88;
-  --teal-soft:  #E6F2F1;
-  --teal-edge:  #BFDEDC;
-
-  --purple:     #6B3FA0;
-  --purple-mid: #8A66C4;
-  --lilac:      #A386D2;
-
-  --hair:       #E3D6F3;
-  --lav:        #F1E9FA;
-  --lav-2:      #EFE6F8;
-  --lav-3:      #EDE3F7;
-  --page:       #F6F1FB;
-  --white:      #FFFFFF;
-  --gold:       #E8B84B;
-
-  --grad:       linear-gradient(90deg, #6B3FA0 0%, #8A66C4 100%);
-  --shadow:     0 26px 60px -38px rgba(36, 31, 46, .55);
-  --shadow-sm:  0 12px 30px -20px rgba(36, 31, 46, .45);
-
-  /* fluid type scale - one size definition, every viewport */
-  --h1:     clamp(38px, 7.6vw, 70px);
-  --h2:     clamp(28px, 4.6vw, 44px);
-  --h3:     clamp(19px, 1.9vw, 22px);
-  --lead:   clamp(18px, 2.2vw, 24px);
-  --body:   clamp(16px, 1.7vw, 18.5px);
-  --small:  clamp(14px, 1.4vw, 15px);
-  --micro:  clamp(12.5px, 1.2vw, 13.5px);
-  --eyebrow: clamp(11.5px, 1.1vw, 12.5px);
-}
-
-* { box-sizing: border-box; }
-
-html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-
-body {
-  margin: 0;
-  background: var(--page);
-  color: var(--ink);
-  font-family: Poppins, "Segoe UI", system-ui, sans-serif;
-  font-size: var(--body);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-
-a { color: var(--teal); text-decoration: none; }
-p { margin: 0; }
-/* height:auto is what makes the width/height attributes a hint rather than a
-   command - without it any image whose CSS leaves height unset renders at the
-   attribute's pixel height and stretches. Every rule below that sets a real
-   height is more specific and still wins. */
-img { max-width: 100%; height: auto; display: block; }
-
-/* ---- layout ------------------------------------------------------------ */
-
-.wrap { width: min(1160px, 100% - clamp(32px, 6vw, 112px)); margin-inline: auto; }
-
-.band { padding: clamp(54px, 7.4vw, 96px) 0; }
-.band-white { background: var(--white); }
-.band-lav   { background: var(--page); }
-.band-lav2  { background: var(--lav-2); }
-.band-teal  { background: var(--teal); color: var(--white); }
-
-.stack   { display: flex; flex-direction: column; gap: clamp(22px, 3vw, 34px); }
-.stack-s { display: flex; flex-direction: column; gap: clamp(14px, 1.8vw, 20px); }
-
-/* ---- type -------------------------------------------------------------- */
-
-.eyebrow {
-  font-size: var(--eyebrow); font-weight: 700; letter-spacing: .2em;
-  text-transform: uppercase; color: var(--purple-mid); margin: 0;
-}
-.band-teal .eyebrow { color: #C9AEEA; }
-
-.h1, .h2 { margin: 0; font-weight: 800; letter-spacing: -.02em; text-wrap: balance; }
-.h1 { font-size: var(--h1); line-height: 1.06; color: var(--ink); }
-.h2 { font-size: var(--h2); line-height: 1.16; color: var(--teal); }
-.band-teal .h2 { color: var(--white); }
-
-/* The script accent is an inline run, not a flex sibling. It keeps its
-   baseline, it never splits mid-phrase, and the line wraps like text. */
-.h1 em, .h2 em {
-  font-family: 'Kaushan Script', 'Brush Script MT', cursive;
-  font-style: normal; font-weight: 400;
-  font-size: 1.22em; line-height: 1;
-  color: var(--lilac); white-space: nowrap;
-  letter-spacing: 0;
-  /* Kaushan overhangs to the right; without this the next word touches it */
-  margin-right: .12em;
-}
-.band-teal .h2 em { color: #C9AEEA; }
-/* a long headline would leave one word stranded ahead of the script run */
-@media (max-width: 760px) { .h2-split em { display: block; margin-top: 2px; } }
-
-.lead { font-size: var(--lead); line-height: 1.45; font-weight: 700; color: var(--purple-mid); margin: 0; }
-.body { font-size: var(--body); line-height: 1.65; color: var(--ink-soft); margin: 0; }
-.small { font-size: var(--small); line-height: 1.6; color: var(--muted); margin: 0; }
-.micro { font-size: var(--micro); line-height: 1.55; color: var(--muted); margin: 0; }
-.band-teal .body { color: var(--teal-ink); }
-.band-teal .micro { color: #B7DAD8; }
-
-.script { font-family: 'Kaushan Script', 'Brush Script MT', cursive; color: var(--lilac); }
-
-/* ---- cards ------------------------------------------------------------- */
-
-.card {
-  background: var(--white); border: 1px solid var(--hair);
-  border-radius: clamp(18px, 2vw, 24px); padding: clamp(20px, 2.4vw, 28px);
-}
-.card-title { font-size: var(--h3); line-height: 1.3; font-weight: 700; color: var(--teal); margin: 0; }
-
-.grid { display: grid; gap: clamp(14px, 1.7vw, 20px); }
-.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.grid-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-@media (max-width: 860px) { .grid-3 { grid-template-columns: 1fr; } }
-@media (max-width: 720px) { .grid-2 { grid-template-columns: 1fr; } }
-.with-photo .grid-2 { grid-template-columns: 1fr; }
-@media (min-width: 1100px) { .with-photo .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 560px) { .grid-6 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-
-/* ---- buttons ----------------------------------------------------------- */
-
-.btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  font-family: inherit; font-weight: 800; font-size: clamp(16.5px, 1.8vw, 19px);
-  line-height: 1.15; border: 0; border-radius: 16px; text-align: center;
-  padding: 19px clamp(32px, 4.2vw, 54px); min-height: 64px; cursor: pointer;
-  transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
-}
-.btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
-.btn-primary { background: var(--grad); color: var(--white); box-shadow: 0 20px 40px -18px rgba(107, 63, 160, .65); }
-.btn-light   { background: var(--white); color: var(--teal); box-shadow: 0 18px 36px -20px rgba(0, 0, 0, .45); }
-.btn-ghost   {
-  /* Flanked by two filled buttons, anything hollow reads as disabled - so this
-     one is filled too, just a flatter purple. The bestseller keeps its lead
-     through the badge, the border and the gradient, not through being the
-     only solid button. */
-  background: var(--purple-mid); color: var(--white);
-  box-shadow: 0 14px 30px -16px rgba(138, 102, 196, .75);
-}
-.btn-ghost:hover { background: var(--purple); }
-.btn-teal    { background: var(--teal); color: var(--white); box-shadow: 0 18px 36px -20px rgba(39, 111, 108, .7); }
-.btn-full    { width: 100%; padding-inline: 18px; }
-/* on a narrow column a short button reads as an afterthought - fill it */
-@media (max-width: 700px) { .band .btn { width: 100%; padding-inline: 18px; } }
-
-/* ---- small parts ------------------------------------------------------- */
-
-.stars { display: inline-flex; gap: 2px; }
-.rating { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.rating b { font-size: clamp(16px, 1.7vw, 18px); font-weight: 800; }
-
-.avatars { display: inline-flex; }
-.avatars img {
-  width: clamp(36px, 4vw, 42px); height: clamp(36px, 4vw, 42px);
-  border-radius: 999px; object-fit: cover; border: 2px solid var(--white);
-  margin-left: -11px; box-shadow: var(--shadow-sm);
-}
-.avatars img:first-child { margin-left: 0; }
-
-.pill {
-  display: inline-block; background: var(--lav); color: var(--purple-mid);
-  font-size: var(--micro); font-weight: 700; border-radius: 999px; padding: 4px 11px;
-}
-.tick { flex: 0 0 auto; }
-
-.rule { height: 1px; background: var(--hair); border: 0; margin: 0; }
-.band-teal .rule { background: var(--teal-line); }
-
-/* ---- header ------------------------------------------------------------ */
-
-/* announcement bar + header, matching the coaching landing page */
-.announce { background: linear-gradient(90deg, #5B2A80 0%, #7E36A6 48%, #C0468C 100%); color: #FFFFFF; }
-.announce-in {
-  display: flex; align-items: center; justify-content: center; gap: 9px; flex-wrap: wrap;
-  padding: 7px 18px; font-size: 11.5px; font-weight: 800; letter-spacing: .06em;
-  text-transform: uppercase; text-align: center;
-}
-.announce-star { color: #F6C9E4; }
-
-.masthead { background: var(--white); border-bottom: 1px solid var(--hair); }
-.masthead-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; }
-.logo { height: 26px; width: auto; }
-.masthead-cta {
-  display: inline-flex; align-items: center; background: var(--grad); color: #FFFFFF;
-  font-family: inherit; font-weight: 800; font-size: 14px; border: 0; border-radius: 12px;
-  padding: 11px 20px; box-shadow: 0 10px 22px -10px rgba(91, 42, 128, .5);
-  transition: transform .15s ease, filter .15s ease;
-}
-.masthead-cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
-/* below this the sticky bar carries the CTA, so the header just holds the logo */
-@media (max-width: 560px) { .masthead-cta { display: none; } .masthead-in { justify-content: center; } }
-
-/* ---- hero -------------------------------------------------------------- */
-
-/* Plain greedy wrapping. balance evened every line out and pretty stranded
-   "again," on a line of its own; normal lets line one fill with
-   "Finally feel like yourself" and the rest follow. */
-/* Plain greedy wrapping - balance evened the lines out and pretty stranded a
-   word on its own. The groups keep each sentence together so the breaks land
-   where the copy reads, and they release below 560px so nothing can overflow. */
-.hero .h1 { font-size: clamp(28px, 3.5vw, 42px); line-height: 1.2; letter-spacing: -.015em; text-wrap: wrap; }
-.hero .h1 .grp { white-space: nowrap; }
-/* the opening line carries the purple; the symptom lines stay ink. The script
-   word keeps the lighter lilac so it still lifts off the line. */
-.hl { color: var(--purple); }
-@media (max-width: 560px) { .hero .h1 .grp { white-space: normal; } }
-/* a marker sweep under the promise, as on the coaching page's sub-headline */
-.mk {
-  background: linear-gradient(180deg, transparent 58%, #DCC8F4 58%);
-  color: var(--purple); padding: 0 .06em; border-radius: 2px;
-  font-weight: 700;
-  /* a marked phrase is one idea - never split it across a line break, which
-     was leaving "better" stranded at the end of line one */
-  white-space: nowrap;
-}
-.hero-sub { font-size: clamp(16.5px, 1.75vw, 19.5px); font-weight: 500; color: var(--ink-soft);
-            line-height: 1.55; max-width: 690px; }
-/* the review count is the one thing the badge can afford to drop on a phone */
-@media (max-width: 720px) { .badge .badge-t { display: none; } }
-
-.hero { background: linear-gradient(180deg, var(--page) 0%, var(--lav-2) 100%);
-         padding-top: clamp(26px, 3.6vw, 84px); padding-bottom: 0; }
-.hero .stack { gap: clamp(16px, 2.2vw, 32px); }
-.hero .lead { line-height: 1.32; }
-.hero-grid {
-  display: grid; grid-template-columns: minmax(0, 1fr) clamp(240px, 24vw, 340px);
-  gap: clamp(28px, 4vw, 56px); align-items: start;
-}
-@media (max-width: 940px) { .hero-grid { grid-template-columns: 1fr; } }
-
-.why-grid {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
-  gap: clamp(28px, 4vw, 56px); align-items: center;
-}
-@media (max-width: 940px) { .why-grid { grid-template-columns: 1fr; } }
-
-/* The shot is a cut-out whose arm runs off the bottom-right of its own frame,
-   so it has to sit flush with both edges or the arm reads as severed. It is
-   taken out of the grid and pinned to the bottom-right of .hero-top, which
-   spans the full viewport width - the grid's wrap could never reach the edge.
-   The hero's bottom padding moves onto .hero-top so bottom:0 lands exactly on
-   the photo strip. */
-.hero-top {
-  position: relative;
-  padding-bottom: clamp(28px, 3.6vw, 78px);
-}
-.hero-shot {
-  position: absolute; bottom: 0; pointer-events: none;
-  /* This shot has clear space on its right, so it no longer needs to bleed off
-     the screen - only its bottom edge is a cut. Aligning it to the content's
-     right edge instead brings it in beside the headline where it belongs. */
-  --gutter: max(calc(clamp(32px, 6vw, 112px) / 2), calc((100% - 1160px) / 2));
-  right: max(0px, calc(var(--gutter) - 120px));
-  height: min(100%, 34vw);
-  width: auto;
-}
-
-.hero-quote { border-width: 1.5px; box-shadow: var(--shadow-sm); }
-.hero-quote p { font-size: clamp(15.5px, 1.7vw, 17px); line-height: 1.5; font-weight: 500; color: var(--ink); }
-
-/* On a phone the product render gives way to the customer photos, which do
-   the hero image's job. One flex column reorders the pieces around it - the
-   grid becomes display:contents so its two columns join that same flow. */
-@media (max-width: 940px) {
-  .hero { display: flex; flex-direction: column; padding-bottom: 0; }
-  .hero-top, .hero-grid { display: contents; }
-  .hero-copy  { order: 1; }
-  .photos     { order: 2; }
-  .hero-aside { order: 3; }
-  .press      { order: 4; }
-
-  .hero-copy, .hero-aside { width: min(1160px, 100% - clamp(32px, 6vw, 112px)); margin-inline: auto; }
-  .hero-shot { display: none; }
-
-  .hero-aside { margin-top: clamp(16px, 2.6vw, 24px); }
-  .press { margin-top: clamp(22px, 3.4vw, 32px); padding-top: clamp(28px, 6vw, 40px); border-top: 1px solid var(--hair); }
-}
-
-/* ---- hero call to action ------------------------------------------------
-   The guarantee line sat 20px under the button and flush against the photo
-   strip's white edge. Pull it up to the button, and push the strip away. */
-/* On a phone the two sweeps crowd each other, so the capsule line drops its
-   highlight and the promise takes the whole sentence instead. Nesting the
-   existing mark inside keeps the sweep unbroken across the space. */
-@media (max-width: 720px) {
-  .mk-caps { background: none; color: inherit; font-weight: inherit; padding: 0; white-space: normal; }
-  .mk-b {
-    background: linear-gradient(180deg, transparent 58%, #DCC8F4 58%);
-    color: var(--purple); padding: 0 .06em; border-radius: 2px; font-weight: 700;
-  }
-  .mk-b .mk { background: none; padding: 0; }
-}
-
-.hero-cta {
-  display: flex; flex-direction: column; gap: 10px;
-  /* fit-content makes the column exactly as wide as the button, so stretching
-     the guarantee line centres it under the button rather than in the grid */
-  width: fit-content; align-items: stretch;
-}
-.hero-cta .micro { text-align: center; }
-.hero-cta .btn { padding-inline: clamp(38px, 5.4vw, 78px); }
-.hero-cta .micro { font-weight: 600; }
-
-@media (max-width: 940px) {
-  /* stacked, the button fills the column - so centre the line under it, and
-     cap the width so it does not become a banner on a tablet */
-  .hero-cta { align-items: center; width: auto; }
-  .hero-cta .btn { width: 100%; max-width: 560px; }
-  .hero-cta .micro { text-align: center; }
-  .hero-grid { margin-bottom: 0; }
-}
-
-/* ---- symptom / step / faq lists ---------------------------------------- */
-
-.ticklist { display: flex; flex-direction: column; gap: clamp(10px, 1.3vw, 14px); }
-.ticklist > div { display: flex; gap: 13px; align-items: center; }
-.ticklist span { font-size: var(--body); line-height: 1.45; color: var(--ink-soft); }
-.sym {
-  flex: 0 0 auto; width: 40px; height: 40px; border-radius: 13px;
-  background: var(--white); border: 1px solid var(--hair); color: var(--purple);
-  display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);
-}
-
-.step { display: flex; gap: 16px; align-items: flex-start; }
-.step-n {
-  flex: 0 0 auto; width: 42px; height: 42px; border-radius: 999px; background: var(--lav-2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; font-weight: 800; color: var(--purple-mid);
-}
-
-.trustrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(10px, 1.4vw, 16px); }
-.trustrow > div {
-  background: var(--white); border: 1px solid var(--hair); border-radius: 16px;
-  padding: clamp(14px, 1.8vw, 20px) 10px; display: flex; flex-direction: column;
-  gap: 9px; align-items: center; text-align: center;
-  font-size: var(--micro); font-weight: 600; color: var(--ink-soft);
-}
-
-/* ---- ingredients ------------------------------------------------------- */
-
-.ing { display: flex; flex-direction: column; gap: 4px; padding: clamp(14px, 1.7vw, 18px) 0; border-top: 1px solid var(--lav-2); }
-.ing-h { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.ing-h b { font-size: var(--h3); font-weight: 700; color: var(--teal); }
-
-/* no white card here - the bottle is white and was sitting on white. The panel
-   reads straight off the band, and each ingredient gets a tile showing where
-   it actually comes from: cruciferous veg, citrus, black pepper. */
-.ing-ico {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: clamp(44px, 3.8vw, 54px); height: clamp(44px, 3.8vw, 54px);
-  border-radius: 14px; background: var(--white); border: 1px solid var(--hair);
-  color: var(--teal); box-shadow: var(--shadow-sm); margin-bottom: 10px;
-}
-.ing-ico svg { width: 66%; height: 66%; }
-.ing-panel .eyebrow { display: block; }
-
-/* ---- the three ingredients, mapped around the bottle -------------------- */
-.ing-panel { overflow: hidden; }
-.ing-map {
-  display: grid; align-items: center;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  grid-template-areas: "a bottle b" ". c .";
-  column-gap: clamp(8px, 1.8vw, 30px);
-  row-gap: clamp(6px, 1vw, 14px);
-  margin: clamp(16px, 2.2vw, 28px) 0 clamp(18px, 2.4vw, 30px);
-}
-.ing-a { grid-area: a; }
-.ing-b { grid-area: b; }
-.ing-c { grid-area: c; }
-/* sized by height, not column width - the shot is tall, and letting the
-   column drive it made it tower over the labels */
-.ing-bottle { grid-area: bottle; height: clamp(230px, 27vw, 340px); width: auto; justify-self: center; }
-
-.ing-node { display: flex; align-items: center; gap: clamp(4px, .8vw, 14px); color: var(--teal); }
-.ing-a { flex-direction: row; }
-.ing-b { flex-direction: row-reverse; }
-.ing-c { flex-direction: column-reverse; }
-
-.ing-card { min-width: 0; }
-.ing-a .ing-card { text-align: right; }
-.ing-b .ing-card { text-align: left; }
-.ing-c .ing-card { text-align: center; max-width: 42ch; }
-.ing-h { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
-.ing-a .ing-h { justify-content: flex-end; }
-.ing-c .ing-h { justify-content: center; }
-.ing-card .small { margin-top: 3px; }
-
-.ing-arrow { flex: 0 0 auto; width: clamp(48px, 5.6vw, 76px); height: auto; }
-.ing-b .ing-arrow { transform: scaleX(-1); }
-.ing-arrow-up { width: clamp(30px, 3vw, 42px); }
-
-.ing-foot { border-top: 1px solid var(--lav-2); padding-top: 16px; }
-
-/* Stacked, the radial cannot hold - the bottle goes on top and the three read
-   as a column beneath it, each still pointing back up at the product. */
-@media (max-width: 820px) {
-  .ing-map {
-    grid-template-columns: 1fr;
-    grid-template-areas: "bottle" "a" "b" "c";
-    justify-items: center;
-    row-gap: clamp(10px, 2.4vw, 18px);
-  }
-  /* height:auto or the desktop height rule still applies and squashes it */
-  .ing-bottle { width: clamp(150px, 42vw, 215px); height: auto; }
-  .ing-node {
-    flex-direction: row-reverse; width: 100%; gap: 12px; align-items: flex-start;
-    background: var(--lav); border-radius: 15px; padding: 14px 16px;
-  }
-  .ing-a .ing-card, .ing-b .ing-card, .ing-c .ing-card { text-align: left; max-width: none; flex: 1; }
-  .ing-a .ing-h, .ing-c .ing-h { justify-content: flex-start; }
-  /* all three point the same way - up and back toward the bottle above */
-  .ing-arrow { width: 38px; height: 38px; margin-top: 2px; transform: rotate(-52deg); }
-  /* the card is the same lavender as the pill, so the pill needs to lift off it */
-  .ing-node .pill { background: var(--white); }
-  .ing-b .ing-arrow { transform: rotate(-52deg); }
-  .ing-arrow-up { transform: scaleX(-1); }
-}
-
-/* ---- sign-off ---------------------------------------------------------- */
-
-.signoff {
-  background: var(--lav-3); border-radius: clamp(22px, 2.6vw, 30px); overflow: hidden;
-  display: grid; grid-template-columns: clamp(260px, 32vw, 380px) minmax(0, 1fr); align-items: center;
-}
-.signoff img { width: 100%; height: 100%; object-fit: cover; }
-@media (max-width: 800px) { .signoff { grid-template-columns: 1fr; } .signoff img { height: auto; } }
-
-/* ---- offer section ----------------------------------------------------- */
-
-.offers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 1.8vw, 22px); align-items: stretch; }
-@media (max-width: 900px) { .offers { grid-template-columns: 1fr; max-width: 460px; margin-inline: auto; } }
-
-.offer-col { display: flex; flex-direction: column; }
-.offer {
-  flex: 1; position: relative; background: var(--white); border: 1.5px solid var(--hair);
-  border-radius: 22px; padding: clamp(24px, 2.6vw, 30px) clamp(20px, 2.2vw, 24px);
-  display: flex; flex-direction: column; align-items: center; text-align: center;
-  transition: box-shadow .18s ease;
-}
-.offer:hover { box-shadow: var(--shadow); }
-.offer-best { background: linear-gradient(165deg, #FFFFFF 0%, #F7ECFB 100%); border: 2px solid var(--purple); padding-top: clamp(30px, 3vw, 36px); }
-.offer-sub  { border-color: var(--teal-edge); }
-
-.offer-badge {
-  position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
-  background: var(--grad); color: var(--white); font-size: clamp(11px, 1.1vw, 12px);
-  font-weight: 800; letter-spacing: .1em; padding: 9px 20px; border-radius: 999px;
-  white-space: nowrap; box-shadow: 0 10px 22px -10px rgba(107, 63, 160, .6);
-}
-
-.offer-head { display: flex; flex-direction: column; align-items: center; width: 100%; }
-.offer-main { display: flex; flex-direction: column; align-items: center; width: 100%; }
-.offer-shots { display: flex; align-items: flex-end; justify-content: center; gap: 10px; height: clamp(132px, 13vw, 156px); margin-bottom: 16px; }
-.offer-shots img { height: 100%; width: auto; filter: drop-shadow(0 14px 16px rgba(36, 31, 46, .2)); }
-.offer-shots .shot-guide { height: 72%; }
-
-.offer-kicker { font-size: clamp(11px, 1.1vw, 12px); font-weight: 800; letter-spacing: .16em; color: var(--purple-mid); }
-.offer-sub .offer-kicker { color: var(--teal); }
-.offer-supply { font-size: clamp(15.5px, 1.6vw, 17px); font-weight: 600; color: var(--muted); margin-top: 6px; }
-.offer-price { display: flex; align-items: baseline; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
-.offer-now { font-size: clamp(42px, 4.6vw, 54px); line-height: 1; font-weight: 800; letter-spacing: -.03em; color: var(--purple); }
-.offer-sub .offer-now { color: var(--teal); }
-.offer-was { font-size: clamp(21px, 2.2vw, 24px); font-weight: 700; color: var(--muted); }
-.offer-day { font-size: clamp(14px, 1.5vw, 15.5px); font-weight: 800; color: var(--purple); margin-top: 9px; }
-.offer-sub .offer-day { color: var(--teal); }
-.offer-terms { font-size: var(--micro); font-weight: 600; color: var(--muted); margin-top: 5px; }
-.offer-fill { flex: 1; min-height: 18px; }
-
-.offer-bonus {
-  width: 100%; display: flex; align-items: center; justify-content: center; gap: 9px;
-  padding: 8px 12px; border: 1.5px dashed var(--lilac); background: #F7F1FD;
-  border-radius: 13px; margin-bottom: 14px;
-}
-.offer-bonus img { height: 34px; width: auto; filter: drop-shadow(0 4px 6px rgba(36, 31, 46, .22)); }
-.offer-bonus span { font-size: clamp(12px, 1.2vw, 13px); font-weight: 700; color: var(--ink); line-height: 1.3; text-align: left; }
-.offer-bonus b { color: var(--purple); font-weight: 800; }
-
-.offer-guarantee { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 13px; }
-.offer-guarantee span { font-size: var(--micro); font-weight: 700; color: var(--teal); white-space: nowrap; }
-
-.or { display: flex; align-items: center; gap: 14px; margin: 4px 2px; }
-.or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--hair); }
-.or span { font-size: 11.5px; font-weight: 800; letter-spacing: .18em; color: var(--purple-mid); }
-@media (min-width: 901px) { .or { display: none; } }
-
-/* Stacked on a phone, three tall cards meant the second and third fell well
-   below the fold - so the shot moves beside the copy and each card halves. */
-@media (max-width: 900px) {
-  .offers { gap: 12px; }
-  .offer { padding: 18px 16px; border-radius: 18px; }
-  .offer-best { padding-top: 26px; }
-  .offer-head { flex-direction: row; align-items: center; gap: 20px; }
-  .offer-main { align-items: flex-start; text-align: left; flex: 1; min-width: 0; width: auto; }
-  .offer-shots { height: 104px; margin-bottom: 0; flex: 0 0 auto; gap: 6px; padding-left: 2px; }
-  .offer-shots .shot-guide { height: 64%; }
-  .offer-supply { margin-top: 2px; font-size: 15px; }
-  .offer-price { justify-content: flex-start; margin-top: 6px; gap: 9px; }
-  .offer-now { font-size: 38px; }
-  .offer-was { font-size: 19px; }
-  .offer-day { margin-top: 5px; font-size: 14px; }
-  .offer-terms { margin-top: 2px; }
-  .ship { margin-top: 8px; padding: 6px 12px; }
-  .offer-fill { display: none; }
-  .offer > .btn { margin-top: 14px; }
-  .offer-bonus { margin-top: 14px; margin-bottom: 0; padding: 7px 10px; }
-  .offer-bonus img { height: 30px; }
-  /* the desktop spacer sits between them in the markup, so match both */
-  .offer-bonus + .btn,
-  .offer-bonus + .offer-fill + .btn { margin-top: 10px; }
-  .offer-guarantee { margin-top: 9px; }
-  .or { margin: 2px; }
-}
-
-/* the diagonal "was" strike, as on JJ's coaching page */
-.strike { position: relative; display: inline-block; }
-.strike::after {
-  content: ""; position: absolute; left: -6%; right: -6%; top: 50%; height: 2px;
-  background: #E23B3B; border-radius: 3px; transform: translateY(-50%) rotate(-11deg);
-}
-
-/* ---- tinted card, for cards that sit on a white band ------------------- */
-.card-soft { background: var(--lav); border-color: transparent; }
-
-/* ---- hero trust badge -------------------------------------------------- */
-.badge {
-  display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  background: var(--white); border: 1px solid var(--hair); border-radius: 999px;
-  padding: 7px 16px 7px 8px; box-shadow: var(--shadow-sm); align-self: flex-start;
-}
-.badge .avatars img { width: 30px; height: 30px; }
-.badge b { font-size: clamp(14px, 1.5vw, 15.5px); font-weight: 800; }
-.badge .badge-t { font-size: var(--micro); font-weight: 600; color: var(--muted); }
-
-/* ---- press logos ------------------------------------------------------- */
-.press { padding: 0 0 clamp(18px, 2.2vw, 26px); background: var(--white); border-bottom: 1px solid var(--hair); }
-.marquee {
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-          mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-}
-.marquee-track { display: flex; align-items: center; gap: 50px; width: max-content; animation: hf-scroll 40s linear infinite; }
-.marquee-track img { height: 64px; width: auto; object-fit: contain; opacity: 1; filter: none; }
-@media (max-width: 760px) {
-  .marquee-track { gap: 42px; }
-  .marquee-track img { height: 66px; }
-}
-@keyframes hf-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
-
-/* ---- customer photo slider, under the logos --------------------------- */
-.photos {
-  /* padding, not margin - a margin here would show the hero gradient as a
-     stripe between the logos and the photos, splitting one white band in two */
-  background: var(--white); border-top: 1px solid var(--hair);
-  padding: clamp(18px, 2.4vw, 38px) 0 clamp(14px, 1.6vw, 22px);
-}
-/* the fade masks the strip, not the band - a mask on .photos would eat its
-   own background and break the white band it shares with the logos */
-.photos-view {
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
-          mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
-}
-.photos-track {
-  display: flex; gap: 16px; width: max-content;
-  animation: hf-scroll 60s linear infinite; animation-direction: reverse;
-}
-.photos:hover .photos-track { animation-play-state: paused; }
-.photos-track img {
-  flex: 0 0 auto; width: 158px; height: 188px; object-fit: cover; object-position: top;
-  border-radius: 18px; box-shadow: var(--shadow-sm);
-}
-/* On a phone this strip stands in for the hero image, so it runs much larger
-   and sits on the hero's own background rather than in the white press band. */
-@media (max-width: 940px) {
-  .photos { background: transparent; border-top: 0; padding: clamp(26px, 4.6vw, 36px) 0 0; }
-  .photos-track { gap: 12px; animation-duration: 70s; }
-  .photos-track img { width: clamp(200px, 58vw, 280px); height: clamp(260px, 76vw, 360px); border-radius: 20px; }
-}
-
-@media (prefers-reduced-motion: reduce) { .photos-track { animation: none; } }
-
-/* ---- a portrait beside a section's content ---------------------------- */
-.with-photo { display: grid; grid-template-columns: minmax(0, 1fr) clamp(260px, 30vw, 360px); gap: clamp(26px, 4vw, 56px); align-items: center; }
-.with-photo.is-left { grid-template-columns: clamp(260px, 30vw, 360px) minmax(0, 1fr); }
-.with-photo img {
-  width: 100%; border-radius: clamp(18px, 2vw, 24px);
-  /* the cut-outs are flattened onto white, so fade the crop into the band */
-  -webkit-mask-image: linear-gradient(180deg, #000 80%, transparent 100%);
-          mask-image: linear-gradient(180deg, #000 80%, transparent 100%);
-}
-.with-photo.is-left img { align-self: center; }
-/* a transparent PNG that carries its own disc - no crop to soften, no corners */
-.with-photo img.disc { border-radius: 0; -webkit-mask-image: none; mask-image: none; }
-@media (max-width: 860px) {
-  .with-photo, .with-photo.is-left { grid-template-columns: 1fr; }
-  .with-photo img { max-width: 320px; margin-inline: auto; }
-}
-
-/* ---- free shipping, called out rather than buried in a terms line ------ */
-.ship {
-  display: inline-flex; align-items: center; gap: 7px; margin-top: 11px;
-  background: var(--teal-soft); color: var(--teal); border-radius: 999px;
-  padding: 7px 14px; font-size: clamp(11.5px, 1.15vw, 12.5px);
-  font-weight: 800; letter-spacing: .09em; white-space: nowrap;
-}
-
-/* the written reviews and the screenshot side by side - the screenshot is the
-   one piece of proof nobody can have written for us */
-.proof-split { display: grid; grid-template-columns: minmax(0, 1fr) clamp(320px, 33vw, 450px); gap: clamp(14px, 1.8vw, 22px); align-items: start; }
-@media (max-width: 940px) {
-  .proof-split { grid-template-columns: 1fr; }
-  .fb-desk { display: none; }   /* on a phone it lives in the hero instead */
-}
-
-/* a real Facebook comment, shown as the screenshot it is */
-.fb-shot { margin: 0; background: var(--white); border: 1px solid var(--hair);
-           border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-sm); }
-.fb-shot img { width: 100%; height: auto; display: block; }
-
-
-/* ---- review attribution ------------------------------------------------ */
-.rev-by { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
-.rev-av {
-  flex: 0 0 auto; width: 40px; height: 40px; border-radius: 999px;
-  object-fit: cover; object-position: 50% 20%; border: 2px solid var(--white);
-  box-shadow: var(--shadow-sm);
-}
-
-/* ---- mid-page call to action ------------------------------------------- */
-.cta-row { display: flex; justify-content: center; }
-
-/* ---- video testimonials -------------------------------------------------
-   Nine Vimeo clips. Each starts as a poster and only swaps in the player on
-   click, so the page does not pull nine embeds it may never need. */
-.vids { position: relative; }
-.vids-track {
-  display: flex; gap: clamp(10px, 1.3vw, 16px); overflow-x: auto;
-  scroll-snap-type: x mandatory; scroll-behavior: smooth;
-  scrollbar-width: none; padding: 2px 2px 6px;
-}
-.vids-track::-webkit-scrollbar { display: none; }
-.vid {
-  position: relative; flex: 0 0 auto; width: clamp(178px, 21vw, 232px);
-  aspect-ratio: 9 / 16; border-radius: 18px; overflow: hidden;
-  scroll-snap-align: start; background: var(--ink); cursor: pointer;
-  box-shadow: var(--shadow-sm); border: 0; padding: 0;
-}
-.vid img { width: 100%; height: 100%; object-fit: cover; }
-.vid iframe { width: 100%; height: 100%; border: 0; display: block; }
-.vid-play {
-  position: absolute; inset: 0; margin: auto; width: 56px; height: 56px;
-  border: 0; padding: 0; cursor: pointer;
-  border-radius: 999px; background: rgba(255, 255, 255, .94); color: var(--purple);
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 10px 22px -10px rgba(0, 0, 0, .6); transition: transform .16s ease;
-}
-.vid:hover .vid-play { transform: scale(1.09); }
-.vid-close {
-  position: absolute; top: 8px; right: 8px; z-index: 2;
-  width: 30px; height: 30px; border: 0; border-radius: 999px; cursor: pointer;
-  background: rgba(36, 31, 46, .62); color: #FFFFFF;
-  display: flex; align-items: center; justify-content: center;
-}
-.vid-close:hover { background: rgba(36, 31, 46, .85); }
-.vids-nav {
-  position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
-  width: 48px; height: 48px; border-radius: 999px; border: 1px solid var(--hair);
-  background: rgba(255, 255, 255, .97); color: var(--purple); cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 10px 26px -10px rgba(36, 31, 46, .55);
-  transition: transform .15s ease, background .15s ease;
-}
-.vids-nav:hover { background: var(--white); transform: translateY(-50%) scale(1.07); }
-.vids-nav:active { transform: translateY(-50%) scale(.96); }
-.vids-prev { left: clamp(-22px, -1.5vw, -10px); }
-.vids-next { right: clamp(-22px, -1.5vw, -10px); }
-@media (max-width: 900px) {
-  /* no gutter to sit in on a phone, so they ride the edge of the strip */
-  .vids-nav { width: 40px; height: 40px; }
-  .vids-prev { left: 2px; }
-  .vids-next { right: 2px; }
-}
-
-/* ---- guarantee ---------------------------------------------------------- */
-.guarantee { display: grid; grid-template-columns: clamp(150px, 17vw, 210px) minmax(0, 1fr); gap: clamp(24px, 3.4vw, 48px); align-items: center; }
-.guarantee img { width: 100%; filter: drop-shadow(0 18px 26px rgba(0, 0, 0, .3)); }
-@media (max-width: 720px) {
-  .guarantee { grid-template-columns: 1fr; justify-items: center; text-align: center; }
-  .guarantee img { max-width: 168px; }
-}
-
-/* ---- FAQ accordion, after the one on JJ's coaching page ---------------- */
-.faqlist { max-width: 760px; margin: clamp(26px, 3vw, 38px) auto 0; text-align: left; }
-.faq {
-  background: var(--white); border: 1px solid var(--hair); border-radius: 16px;
-  box-shadow: var(--shadow-sm); margin-bottom: 13px; overflow: hidden;
-}
-.faq summary {
-  list-style: none; cursor: pointer; display: flex; align-items: center;
-  justify-content: space-between; gap: 16px; padding: clamp(17px, 1.9vw, 21px) clamp(18px, 2vw, 24px);
-  font-size: clamp(16px, 1.7vw, 18px); font-weight: 700; color: var(--ink); line-height: 1.35;
-}
-.faq summary:hover { background: var(--lav); }
-.faq summary::-webkit-details-marker { display: none; }
-.faq-mark { position: relative; width: 18px; height: 18px; flex: 0 0 auto; }
-.faq-mark::before, .faq-mark::after { content: ""; position: absolute; background: var(--purple); border-radius: 2px; }
-.faq-mark::before { left: 0; top: 8px; width: 18px; height: 2.4px; }
-.faq-mark::after { left: 8px; top: 0; width: 2.4px; height: 18px; transition: opacity .18s ease; }
-.faq[open] .faq-mark::after { opacity: 0; }
-.faq-a { padding: 0 clamp(18px, 2vw, 24px) clamp(18px, 2vw, 22px); display: flex; flex-direction: column; gap: 11px; }
-.faq-a .small { font-size: clamp(15px, 1.55vw, 16.5px); line-height: 1.65; color: var(--ink-soft); }
-.faq-a b { color: var(--teal); }
-
-/* the hero quote repeats a review shown in full further down - on a wide
-   screen the column is busy enough without it */
-@media (min-width: 941px) { .hero-quote { display: none; } }
-
-/* ---- sticky buy bar ---------------------------------------------------- */
-.stickybar {
-  position: fixed; inset-inline: 0; bottom: 0; z-index: 40;
-  background: rgba(255, 255, 255, .96); backdrop-filter: blur(10px);
-  border-top: 1px solid var(--hair); box-shadow: 0 -10px 30px -14px rgba(36, 31, 46, .3);
-  padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px));
-  transform: translateY(110%); transition: transform .25s ease, opacity .25s ease;
-  opacity: 0; pointer-events: none;
-}
-.stickybar.is-on { transform: translateY(0); opacity: 1; pointer-events: auto; }
-.stickybar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
-.stickybar .sb-copy { font-size: var(--micro); font-weight: 700; color: var(--ink); line-height: 1.35; }
-.stickybar .sb-copy b { color: var(--purple); font-weight: 800; }
-.stickybar .btn { min-height: 50px; padding: 13px 22px; font-size: clamp(14.5px, 1.5vw, 16px); border-radius: 13px; white-space: nowrap; }
-.stickybar .sb-copy { white-space: nowrap; }
-@media (max-width: 700px) { .stickybar .sb-more { display: none; } }
-@media (prefers-reduced-motion: reduce) { .stickybar { transition: none; } }
-
-/* keep the bar off the last line of the footnotes */
-.footnotes { padding-bottom: calc(clamp(26px, 3.4vw, 40px) + 82px); }
-
-/* ---- focus ------------------------------------------------------------- */
-a:focus-visible, .btn:focus-visible { outline: 3px solid var(--purple-mid); outline-offset: 3px; border-radius: 14px; }
-
-/* an offer whose destination is not configured yet */
-.hf-pending { opacity: .45; pointer-events: none; }
-
-/* ---- offer section, two-card layout ------------------------------------ */
-/* Everything above still applies: this only adds the parts the pair needs.
-   Base rules first, media queries last, so the phone layout keeps winning. */
-
-.offers-pair {
-  /* the protocol takes the wider column - roughly 45/55 */
-  grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
-  gap: clamp(18px, 2.2vw, 30px);
-  /* width:100% matters - the auto inline margins that centre the pair also
-     cancel the stretch it would otherwise get from .stack, which left the
-     grid shrink-to-fit and the cards narrower than the max-width implies. */
-  width: 100%; max-width: 1070px; margin-inline: auto; align-items: stretch;
-}
-
-/* the lead card: same bestseller treatment, turned up. Wider column, heavier
-   border, bigger price. Same height as its neighbour, so the weight comes from
-   the border, the tint and the badge rather than from size. */
-.offer-lead { border-width: 2.5px; box-shadow: 0 30px 64px -42px rgba(107, 63, 160, .65); }
-.offer-lead .offer-now { font-size: clamp(46px, 5.4vw, 62px); }
-/* Same 1px lilac edge at every width: the mobile block used to set this on
-   its own, and the two had drifted apart on desktop. */
-.offer-quiet { background: var(--white); border-width: 1px; border-color: var(--lilac); box-shadow: none; }
-
-/* Both cards lead with the same pair: one bold title, one muted subtitle.
-   The eyebrow kickers are gone, so the title is the first thing under the
-   shot and carries no top margin. */
-/* The 60-day composite is square and holds five objects, so the shared shot
-   height would render the bottles at a third the size of the single-bottle
-   card's. It gets its own, taller box. */
-.shots-stack,
-.offer-quiet .offer-shots { height: clamp(168px, 15.5vw, 208px); }
-.shots-stack img { filter: drop-shadow(0 16px 18px rgba(36, 31, 46, .18)); }
-
-.offer-name {
-  font-size: clamp(19px, 2.1vw, 23px); font-weight: 800; color: var(--ink);
-  line-height: 1.2; letter-spacing: -.02em; margin-top: 0; text-wrap: balance;
-}
-.offer-quiet .offer-supply,
-.offer-lead .offer-supply {
-  font-size: clamp(14px, 1.45vw, 15.5px); margin-top: 5px;
-  /* the subtitle is a full sentence now, so balance the lines rather than
-     letting the last word strand on its own */
-  text-wrap: balance;
-}
-
-/* ---- the kit banner, protocol card ------------------------------------
-   The artwork carries the title and subtitle, so it runs edge to edge inside
-   the card. The negative margins mirror the card's own padding; keep them in
-   step if that padding ever changes. */
-
-.sr-only {
-  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
-  border: 0;
-}
-
-/* The strip owns the card's top edge now, so the artwork sits below it,
-   centred and inset rather than bled to the edges. */
-.kit-shot {
-  display: block; align-self: center; width: 82%; margin: 0 auto 12px;
-}
-.kit-shot img { display: block; width: 100%; height: auto; }
-
-/* Not a floating pill any more: a strip fixed across the card's top, inside
-   the border, carrying the card's own top radius. The negative margins cancel
-   the card's padding so it reaches the border on three sides; align-self keeps
-   .offer's centring from shrink-wrapping it. */
-.offer-lead .offer-badge {
-  position: static; transform: none; align-self: stretch; width: auto;
-  display: flex; align-items: center; justify-content: center;
-  height: 36px; padding: 0; border-radius: 20px 20px 0 0;
-  box-shadow: none; letter-spacing: .1em;
-  margin-inline: calc(-1 * clamp(20px, 2.2vw, 24px));
-  margin-top: calc(-1 * clamp(24px, 2.2vw, 28px));
-  margin-bottom: 16px;
-}
-
-/* ---- value stack, protocol card ---------------------------------------
-   Same shape as the coaching page's stack (tick + label left, struck value
-   right, dashed rules, tinted total row), rebuilt on this page's tokens. */
-
-.vs { width: 100%; text-align: left; margin-top: clamp(10px, 1.1vw, 13px); }
-
-.vs-list { list-style: none; margin: 0; padding: 0; }
-.vs-list li {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  gap: 10px; padding: 6px 0; border-bottom: 1px dashed var(--hair);
-}
-.vs-list li:first-child { padding-top: 0; }
-
-.vs-name {
-  display: flex; align-items: flex-start; gap: 9px; min-width: 0;
-  font-size: clamp(14.5px, 1.5vw, 16px); font-weight: 600; color: var(--ink);
-  line-height: 1.25;
-}
-/* the label and, on one row only, its description line */
-.vs-text { display: flex; flex-direction: column; min-width: 0; }
-.vs-note {
-  font-size: clamp(13px, 1.35vw, 14px); font-style: italic; font-weight: 500;
-  color: var(--muted); line-height: 1.3; margin-top: 3px;
-}
-
-.vs-tick {
-  flex: 0 0 auto; width: 19px; height: 19px; border-radius: 999px;
-  background: var(--lav); color: var(--purple);
-  display: flex; align-items: center; justify-content: center; margin-top: 1px;
-}
-
-/* .strike supplies the red diagonal the rest of the page already uses */
-.vs-val {
-  /* Sized to the widest figure ($99.98) so every value lines up in a column.
-     The .strike sits on an inner span rather than on this box, so the red
-     line only ever spans the digits, not the padded column width. */
-  flex: 0 0 auto; min-width: 48px; text-align: right;
-  font-size: clamp(14px, 1.45vw, 15px); font-weight: 700;
-  color: var(--muted); white-space: nowrap;
-}
-.vs-incl {
-  flex: 0 0 auto; font-size: clamp(14px, 1.45vw, 15px); font-weight: 800;
-  color: var(--purple); white-space: nowrap;
-}
-/* placeholder figures, deliberately loud until real numbers land */
-.vs-todo {
-  color: var(--purple-mid); background: var(--lav); border-radius: 6px;
-  padding: 1px 7px; letter-spacing: .02em;
-}
-
-/* total and price in one band, with free shipping alongside */
-/* width:100% - .offer centres its children, so without it the band shrinks to
-   its content and sits narrower than the list above it. */
-.vs-deal {
-  width: 100%; display: flex; align-items: center; justify-content: space-between;
-  gap: clamp(10px, 1.2vw, 16px); background: var(--lav); border-radius: 14px;
-  padding: 10px clamp(11px, 1.3vw, 15px); margin-top: 10px; text-align: left;
-}
-/* left side runs inline and wraps only if it has to */
-.vs-deal-col {
-  display: flex; flex-direction: row; align-items: center; flex-wrap: wrap;
-  gap: 4px 9px; min-width: 0;
-}
-/* flex:0 0 auto matters - .vs-deal-col sets min-width:0 so the left side can
-   wrap, but inherited on this column it let the nowrap price shrink below its
-   own width and spill out of the band. */
-.vs-deal-now {
-  flex: 0 0 auto; min-width: auto;
-  flex-direction: column; align-items: flex-end; text-align: right; gap: 1px;
-}
-.vs-deal-l {
-  font-size: clamp(10.5px, 1.1vw, 12px); font-weight: 800; letter-spacing: .13em;
-  text-transform: uppercase; color: var(--muted); line-height: 1;
-}
-.vs-deal-was { font-size: clamp(18px, 1.95vw, 22px); font-weight: 800; color: var(--ink-soft); }
-.vs-deal .ship { margin-top: 0; }
-.vs-deal .offer-now { font-size: clamp(36px, 4vw, 50px); margin-top: 0; }
-.vs-deal .offer-day { margin-top: 1px; }
-
-/* ---- the one-bottle card's two selectable rows ------------------------- */
-
-.opts { width: 100%; display: grid; gap: 10px; text-align: left; }
-
-.opt {
-  position: relative; width: 100%; cursor: pointer;
-  background: var(--white); border: 1.5px solid var(--hair); border-radius: 15px;
-  padding: 13px 15px; min-height: 44px;
-  transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
-}
-.opt:hover { border-color: var(--lilac); }
-.opt-on {
-  border-width: 2px; border-color: var(--purple); background: var(--lav);
-  padding: 12.5px 14.5px;   /* hold the box steady as the border thickens */
-  box-shadow: var(--shadow-sm);
-}
-.opt:focus-visible { outline: 3px solid var(--purple-mid); outline-offset: 2px; }
-
-.opt-top { display: flex; align-items: center; gap: 10px; }
-
-.opt-dot {
-  flex: 0 0 auto; width: 21px; height: 21px; border-radius: 50%;
-  border: 2px solid #C9BBDF; background: var(--white); position: relative;
-  transition: border-color .16s ease;
-}
-.opt-on .opt-dot { border-color: var(--purple); }
-.opt-on .opt-dot::after { content: ""; position: absolute; inset: 3.5px; border-radius: 50%; background: var(--purple); }
-
-.opt-name { flex: 1; min-width: 0; }
-.opt-title {
-  display: flex; align-items: center; flex-wrap: wrap; gap: 7px;
-  font-size: clamp(15px, 1.3vw, 17px); font-weight: 800; color: var(--ink);
-  line-height: 1.2; letter-spacing: -.015em;
-}
-.opt-cadence { font-size: clamp(13px, 1.1vw, 14.5px); font-weight: 600; color: var(--muted); margin-top: 3px; }
-
-.opt-pill {
-  display: inline-flex; align-items: center; border: 1.5px solid var(--lilac);
-  color: var(--purple); border-radius: 999px; padding: 2px 6px;
-  font-size: 9.5px; font-weight: 800; letter-spacing: .05em; white-space: nowrap;
-}
-
-.opt-cost { flex: 0 0 auto; text-align: right; }
-/* Stacked, not side by side. At 28px the live price plus a struck one would
-   take the width the 17px label needs to keep "20% OFF" on its line. */
-.opt-figures { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; white-space: nowrap; }
-.opt-price { font-size: clamp(22px, 2.3vw, 28px); font-weight: 800; letter-spacing: -.025em; color: var(--purple); }
-.opt-was { font-size: clamp(13.5px, 1.25vw, 15px); font-weight: 700; color: var(--muted); }
-.opt-per { font-size: clamp(13px, 1.1vw, 14.5px); font-weight: 700; color: var(--muted); margin-top: 3px; }
-
-/* Always on, selected or not, so the subscription's terms are readable
-   without committing to it first. Teal survives here and only here: the
-   shipping pill is the same component the protocol card uses. */
-.opt-extra {
-  display: flex; align-items: center; flex-wrap: wrap; gap: 7px 10px;
-  margin-top: 11px; padding-top: 11px; border-top: 1.5px solid var(--hair);
-}
-.opt-extra .ship { margin-top: 0; }
-.opt-note { font-size: clamp(13px, 1.1vw, 14.5px); font-weight: 600; color: var(--muted); }
-
-/* the button sits under the rows, and carries the selected price */
-.offer-quiet .opts + .btn { margin-top: 14px; }
-
-/* One trust row for the pair. Both claims get the same weight, so neither
-   reads as a footnote; purple throughout, since teal is now reserved for the
-   shipping pills. */
-.trust {
-  display: flex; flex-wrap: wrap; justify-content: center;
-  align-items: center; gap: 12px clamp(28px, 4.5vw, 64px);
-  margin-top: clamp(20px, 2.2vw, 28px);
-}
-.trust-item {
-  display: inline-flex; align-items: center; gap: 9px;
-  font-size: clamp(15px, 1.55vw, 16.5px); font-weight: 700; color: var(--ink);
-  line-height: 1.25;
-}
-.trust-item svg { flex: 0 0 auto; color: var(--purple); }
-
-@media (min-width: 901px) {
-  /* One bottle reads first, the protocol closes. The DOM keeps the protocol
-     first so a phone still meets it first; only the desktop row is swapped. */
-  .col-bottle   { order: 1; }
-  .col-protocol { order: 2; }
-
-  /* the pair asks for 1200px; .wrap caps the rest of the page at 1160 */
-  #offer .wrap { width: min(1070px, 100% - clamp(32px, 6vw, 112px)); }
-
-  /* tighter than the shared values: the banner is tall, so the rows and the
-     gaps around them give back what they can */
-  .vs-list li { padding: 4px 0; }
-  .vs { margin-top: 4px; }
-  .kit-shot { margin-bottom: 8px; }
-  .vs-deal { margin-top: 8px; }
-  /* both, or the two buttons end up on different lines */
-  .offer-lead, .offer-quiet { padding-bottom: 20px; }
-
-  /* Only the badge needs clearance up here, so this is as tight as it goes. */
-  .offer-lead, .offer-quiet { padding-top: clamp(24px, 2.2vw, 28px); }
-
-  /* Headers run side by side in both cards: shot on the left at ~40% of the
-     card, title and subtitle beside it, the pair vertically centred. Stacked,
-     these two blocks cost about 100px more per card. */
-  /* The protocol card no longer has a head at all (the banner replaced it),
-     so this is the one-bottle card's: stacked and centred, which fills the
-     height it would otherwise leave as a gap beside the taller card. */
-  .offer-head { flex-direction: column; align-items: center; gap: 0; }
-  .offer-shots { flex: 0 0 auto; width: auto; margin-bottom: 14px; align-items: flex-end; }
-  .offer-shots img { max-width: 100%; }
-  .offer-main { align-items: center; text-align: center; width: 100%; }
-  .offer-name { text-wrap: pretty; }
-
-  .offer-quiet .offer-shots { height: clamp(175px, 16.5vw, 205px); }
-
-  /* Equal-height cards. Both heads sit at the top so the two titles land on
-     the same line and the cards can be read across; the slack in the shorter
-     one falls into .offer-fill below the head, which keeps both buttons on
-     the same line too. */
-  /* Tightened from ~20px: the larger option text has to come from somewhere,
-     and this gap is the slack in the card rather than the section. */
-  .offer-quiet .offer-head { padding-bottom: 12px; }
-  /* A floor on the one-bottle card's two spacers: at 0 the options block sat
-     flush against the button. The bottle comes down to pay for it, so the card
-     does not get taller. */
-  .offer-quiet .offer-fill { min-height: 16px; }
-  .offer-fill-bottom { min-height: 0; }
-  /* the bonus box brings its own 14px, so the spacer starts from zero */
-  .offer-lead .offer-bonus { margin-bottom: 0; }
-}
-
-/* Small laptops: the pair is still side by side but each card is narrow, and
-   the subscribe row's title, pill and two prices stop fitting on one line.
-   Trim the row rather than let the pill drop under the heading. */
-@media (min-width: 901px) and (max-width: 1010px) {
-  .opt { padding: 12px 11px; }
-  .opt-on { padding: 11.5px 10.5px; }
-  .opt-top { gap: 9px; }
-  .opt-pill { font-size: 9px; padding: 2px 5px; letter-spacing: .03em; }
-}
-
-/* the last stretch before the cards stack, where the columns are narrowest */
-@media (min-width: 901px) and (max-width: 959px) {
-  .offer { padding-inline: 16px; }
-}
-
-@media (max-width: 900px) {
-  .offers-pair { grid-template-columns: 1fr; max-width: 460px; gap: 12px; }
-
-  /* Both cards sit 20px off the screen edge and carry 20px of their own, so
-     their left and right edges line up exactly. */
-  #offer .wrap { width: min(1160px, 100% - 40px); }
-  .offer { padding: 16px 20px; }
-  .offer-best { padding-top: 24px; }
-  /* 8% down from the old full-bleed width, which is a touch wider than the
-     content box, so it keeps a small bleed */
-  .kit-shot { width: calc(100% + 10px); margin: 0 -5px 2px; }
-  .offer-lead .offer-badge {
-    margin-inline: -20px; margin-top: -24px; margin-bottom: 12px;
-    border-radius: 16px 16px 0 0; height: 34px;
-  }
-
-  .vs-list li { gap: 8px; }
-  .vs-name { gap: 8px; }
-  .vs-tick { width: 16px; height: 16px; margin-top: 2px; }
-  .vs-val { min-width: 46px; }
-
-  /* the deal band is the tightest row on a phone: shrink the pill and the
-     price so the two columns clear each other */
-  .vs-deal { gap: 8px; padding: 10px 11px; }
-  .vs-deal-l { font-size: 10px; }
-  .vs-deal-was { font-size: 17px; }
-  .vs-deal .offer-now { font-size: 32px; }
-  .vs-deal .ship { font-size: 10px; padding: 4px 9px; letter-spacing: .04em; gap: 5px; }
-  .vs-deal .ship svg { width: 12px; height: 12px; }
-  .offer-name { font-size: 16px; margin-top: 5px; }
-
-  /* ---- both card headers: shot left, title and subtitle right ----------
-     One structure for both cards. The protocol's shot takes 35% of the inner
-     width and its height follows the square, so there is no dead space above
-     or below it; the text group beside it is centred against it. */
-  .offer-lead .offer-head,
-  .offer-quiet .offer-head { gap: 14px; align-items: center; flex-wrap: nowrap; }
-  .offer-lead .offer-main,
-  .offer-quiet .offer-main {
-    display: flex; flex-direction: column; align-items: flex-start;
-    text-align: left; flex: 1; min-width: 0; width: auto;
-  }
-  .offer-lead .offer-shots {
-    flex: 0 0 35%; width: 35%; height: auto; padding-left: 0; margin-bottom: 0;
-  }
-  .offer-lead .shots-stack img { width: 100%; height: auto; margin-block: 0; }
-  .offer-lead .offer-supply { font-size: 14px; margin-top: 6px; text-align: left; }
-  /* .vs adds its own 10px, so this lands the header-to-stack gap on 20px */
-  .offer-lead .offer-head { margin-bottom: 10px; }
-
-  /* the lone bottle is a narrow silhouette, so it keeps its own fixed column */
-  .offer-quiet .offer-shots { flex: 0 0 112px; width: 112px; height: 104px; justify-content: center; padding-left: 0; }
-  .offer-quiet .offer-head { margin-bottom: 14px; }
-  .offer-quiet .offer-supply { margin-top: 4px; }
-  .opt { padding: 13px 10px; }
-  .opt-on { padding: 12.5px 9.5px; }
-  .opt-dot { width: 20px; height: 20px; }
-  .opt-top { gap: 10px; }
-
-  /* Type scale matched to the protocol card rather than shrunk to fit. */
-  .opt-title { font-size: 17px; }
-  .opt-cadence { font-size: 15px; margin-top: 2px; }
-  .opt-price { font-size: 22px; }
-  .opt-was { font-size: 15px; }
-  .opt-per { font-size: 15px; }
-  .opt-pill { font-size: 9.5px; padding: 2px 6px; letter-spacing: .05em; }
-
-  /* At 17px the label fills the row on its own, so the badge takes the next
-     line instead of squeezing the label onto two. */
-  .opt-label { flex: 0 0 100%; }
-
-  /* Benefits line up with the label text, not the radio, and the rule above
-     them starts there too. */
-  .opt-extra { margin-left: 30px; margin-top: 10px; padding-top: 10px; gap: 6px 8px; }
-  /* Pill and note share one line here. At the protocol card's pill size the
-     pair needs 313px and the indented row only has 268, so the pill is
-     compacted for this nested context; it keeps the same shape and teal. */
-  .opt-extra .ship { font-size: 10px; padding: 4px 9px; letter-spacing: .04em; gap: 5px; }
-  .opt-extra .ship svg { width: 12px; height: 12px; }
-  .opt-note { font-size: 11.5px; }
-}
-
-/* ---- reviews, live from Okendo ----------------------------------------- */
-
-.rv-stars { display: inline-flex; gap: 2px; line-height: 0; }
-.rv-star { fill: #DCD3E8; flex: 0 0 auto; }
-.rv-star.on { fill: var(--gold); }
-
-.rv-summary {
-  display: grid; grid-template-columns: auto minmax(0, 1fr);
-  gap: clamp(20px, 3vw, 44px); align-items: center;
-  background: var(--lav); border-radius: 20px;
-  padding: clamp(18px, 2.2vw, 26px) clamp(20px, 2.6vw, 30px);
-}
-.rv-score { text-align: center; }
-.rv-avg { font-size: clamp(44px, 5vw, 60px); font-weight: 800; line-height: 1; letter-spacing: -.03em; color: var(--purple); }
-.rv-score .rv-stars { margin-top: 8px; }
-.rv-count { font-size: var(--small); font-weight: 700; color: var(--ink-soft); margin-top: 7px; }
-
-.rv-bars { display: grid; gap: 7px; }
-.rv-bar { display: grid; grid-template-columns: 52px minmax(0, 1fr) 34px; gap: 10px; align-items: center; }
-.rv-bar-l { font-size: var(--micro); font-weight: 700; color: var(--muted); white-space: nowrap; }
-.rv-bar-n { font-size: var(--micro); font-weight: 700; color: var(--muted); text-align: right; }
-.rv-track { height: 8px; border-radius: 999px; background: #E3D6F3; overflow: hidden; }
-.rv-fill { display: block; height: 100%; border-radius: 999px; background: var(--grad); }
-
-.rv-controls { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
-.rv-sort { display: inline-flex; align-items: center; gap: 9px; font-size: var(--small); font-weight: 700; color: var(--ink-soft); }
-.rv-sort select {
-  font-family: inherit; font-size: var(--small); font-weight: 700; color: var(--ink);
-  background: var(--white); border: 1.5px solid var(--hair); border-radius: 11px;
-  padding: 9px 12px; min-height: 44px; cursor: pointer;
-}
-.rv-sort select:focus-visible { outline: 3px solid var(--purple-mid); outline-offset: 2px; }
-.rv-showing { font-size: var(--micro); font-weight: 600; color: var(--muted); }
-
-/* stretch, not start: reviews vary a lot in length, and ragged card bottoms
-   left holes in the grid. Each row matches its tallest card and the attribution
-   sits on the bottom edge. */
-.rv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 1.8vw, 20px); align-items: stretch; }
-
-.rv-card {
-  background: var(--white); border: 1.5px solid var(--hair); border-radius: 18px;
-  padding: clamp(16px, 1.8vw, 20px); display: flex; flex-direction: column; text-align: left;
-}
-.rv-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.rv-date { font-size: var(--micro); font-weight: 600; color: var(--muted); white-space: nowrap; }
-.rv-title { font-size: clamp(15.5px, 1.6vw, 17px); font-weight: 800; color: var(--ink); line-height: 1.3; margin: 10px 0 0; }
-.rv-body {
-  font-size: clamp(14.5px, 1.5vw, 15.5px); font-weight: 500; color: var(--ink-soft);
-  line-height: 1.55; margin: 8px 0 0;
-  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; overflow: hidden;
-}
-.rv-body.is-open { -webkit-line-clamp: unset; overflow: visible; }
-.rv-more {
-  align-self: flex-start; margin-top: 6px; padding: 0; border: 0; background: none;
-  font-family: inherit; font-size: var(--micro); font-weight: 800; color: var(--purple);
-  cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
-}
-.rv-more:focus-visible { outline: 3px solid var(--purple-mid); outline-offset: 3px; border-radius: 4px; }
-
-.rv-photos { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.rv-photo { padding: 0; border: 1.5px solid var(--hair); border-radius: 10px; overflow: hidden; cursor: pointer; background: none; line-height: 0; }
-.rv-photo img { width: 62px; height: 62px; object-fit: cover; display: block; }
-.rv-photo:focus-visible { outline: 3px solid var(--purple-mid); outline-offset: 2px; }
-
-.rv-who { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 13px; border-top: 1px dashed var(--hair); }
-.rv-name { font-size: var(--small); font-weight: 800; color: var(--ink); }
-.rv-verified {
-  font-size: 10.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
-  color: var(--teal); border: 1.5px solid var(--teal-edge); background: var(--teal-soft);
-  border-radius: 999px; padding: 3px 8px; white-space: nowrap;
-}
-
-/* skeletons, shown only while the fetch is in flight */
-.rv-skel { gap: 9px; }
-.sk { display: block; border-radius: 7px; background: linear-gradient(90deg, #F1E9FA 25%, #E7DBF6 37%, #F1E9FA 63%); background-size: 400% 100%; animation: sk 1.3s ease infinite; }
-.sk-row { height: 15px; width: 45%; }
-.sk-title { height: 17px; width: 70%; margin-top: 4px; }
-.sk-line { height: 12px; width: 100%; }
-.sk-line.short { width: 60%; }
-.sk-who { height: 14px; width: 38%; margin-top: 10px; }
-@keyframes sk { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
-@media (prefers-reduced-motion: reduce) { .sk { animation: none; } }
-
-.rv-lightbox {
-  position: fixed; inset: 0; z-index: 90; background: rgba(36, 31, 46, .84);
-  display: flex; align-items: center; justify-content: center; padding: 24px; cursor: zoom-out;
-}
-.rv-lightbox img { max-width: min(92vw, 900px); max-height: 88vh; border-radius: 14px; display: block; }
-.rv-close { position: absolute; top: 16px; right: 20px; font-size: 34px; line-height: 1; color: #fff; background: none; border: 0; cursor: pointer; }
-
-@media (max-width: 860px) {
-  .rv-grid { grid-template-columns: 1fr; }
-  .rv-summary { grid-template-columns: 1fr; gap: 16px; text-align: center; }
-  .rv-bar { grid-template-columns: 48px minmax(0, 1fr) 30px; }
-  .rv-controls { justify-content: center; }
-}
-`;

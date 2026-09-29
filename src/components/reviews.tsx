@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getReviews, type OkendoReview, type ReviewsData } from "@/lib/okendo";
+import okendoLogo from "@/assets/img/okendo-logo.webp";
 
 type Phase = "idle" | "loading" | "ready" | "failed";
 type SortKey = "recent" | "highest" | "lowest" | "photos";
@@ -52,6 +53,7 @@ function ReviewCard({ review, onPhoto }: { review: OkendoReview; onPhoto: (m: st
   }, [review.body]);
 
   const name = review.reviewer?.displayName?.trim() || "Verified customer";
+  const initial = (name.match(/[A-Za-z]/)?.[0] || "?").toUpperCase();
 
   return (
     <article className="rv-card">
@@ -77,15 +79,24 @@ function ReviewCard({ review, onPhoto }: { review: OkendoReview; onPhoto: (m: st
             return (
               <button key={i} type="button" className="rv-photo" onClick={() => onPhoto(full)}
                       aria-label={m.caption || "Open customer photo"}>
-                <img src={thumb} alt={m.caption || ""} loading="lazy" />
+                {/* one dead URL should cost one thumbnail, not the whole row */}
+                <img src={thumb} alt={m.caption || ""} loading="lazy"
+                     onError={(e) => { (e.currentTarget.closest(".rv-photo") as HTMLElement | null)?.remove(); }} />
               </button>
             );
           })}
         </div>
       ) : null}
       <div className="rv-who">
+        <span className="rv-initial" aria-hidden="true">{initial}</span>
         <span className="rv-name">{name}</span>
-        {review.reviewer?.isVerified ? <span className="rv-verified">Verified buyer</span> : null}
+        {/* only where Okendo marks the reviewer verified; never inferred */}
+        {review.reviewer?.isVerified ? (
+          <span className="rv-verified">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6l7-3z" /><path d="M9 12l2 2 4-4" /></svg>
+            Verified buyer
+          </span>
+        ) : null}
       </div>
     </article>
   );
@@ -158,7 +169,7 @@ export default function Reviews() {
     <section className="band band-white" ref={sectionRef} id="reviews">
       <div className="wrap stack">
         <div className="stack-s" style={{ alignItems: "center", textAlign: "center" }}>
-          <p className="eyebrow">Reviews</p>
+          <p className="eyebrow">Customer reviews</p>
           <h2 className="h2">What women are saying</h2>
         </div>
 
@@ -212,6 +223,15 @@ export default function Reviews() {
                 })}
               </div>
             </div>
+
+            {/* Provenance for the numbers above: who collected and checked
+                them. Not a per-review purchase claim, which is what the
+                "Verified buyer" badge on individual cards is for. */}
+            <p className="rv-seal">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6l7-3z" /><path d="M9 12l2 2 4-4" /></svg>
+              <span className="rv-seal-t">Reviews collected and verified by</span>
+              <img src={okendoLogo} width="315" height="68" alt="Okendo" loading="lazy" decoding="async" />
+            </p>
 
             <div className="rv-controls">
               <label className="rv-sort">

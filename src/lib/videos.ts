@@ -2,7 +2,9 @@
 // This is the static page's script, carried over unchanged. Typing it would
 // mean editing it, and the one thing this conversion must not do is change
 // how tracking, attribution or the offer links behave.
-// Ported verbatim from the static page - same behaviour, same guards.
+// Ported from the static page. The only change since: the carousel stepper
+// is gone, because the clips are laid out as a grid rather than a scroller.
+// The poster-to-player swap below is untouched.
 export function initVideos() {
 /* Video testimonials.
 
@@ -53,13 +55,5 @@ export function initVideos() {
     });
   });
 
-  function step(dir) {
-    var card = cards[0];
-    var by = card ? card.getBoundingClientRect().width + 14 : 220;
-    track.scrollBy({ left: dir * by * 2, behavior: 'smooth' });
-  }
-  var prev = document.querySelector('.vids-prev'), next = document.querySelector('.vids-next');
-  if (prev) { prev.addEventListener('click', function () { step(-1); }); }
-  if (next) { next.addEventListener('click', function () { step(1); }); }
 })();
 }
