@@ -14,6 +14,9 @@ export function initTracking() {
   var KEY        = 'hf_attr';
   var PASS       = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
                     'fbclid', 'gclid',
+                    // which advertorial sent the reader here. Carried through to
+                    // Shopify like any other attribution parameter.
+                    'hf_presell',
                     // kept from the original block; harmless, and still useful
                     'utm_id', 'ttclid', 's'];
 
