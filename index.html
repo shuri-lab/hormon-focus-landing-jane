@@ -26,6 +26,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     })(window, document, "clarity", "script", "ylyq7ufwhu");
 </script>
 
+<!-- Hyros universal script. Installed directly, like Clarity, not through the
+     GTM container: if a Hyros tag is ever added there too, remove this block,
+     because two installations double every click. -->
+<script>
+var hyrosHead = document.head;
+var hyrosScript = document.createElement('script');
+hyrosScript.type = 'text/javascript';
+hyrosScript.src = "https://224254.t.hyros.com/v1/lst/universal-script?ph=01be9e27086bea56a534993ace52a5cd7b38088eb9e5420fe8c09b155e83f308&tag=!clicked&ref_url=" + encodeURI(document.URL) ;
+hyrosHead.appendChild(hyrosScript);
+</script>
+
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="shortcut icon" type="image/png" href="/favicon.png">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
