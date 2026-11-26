@@ -64,13 +64,35 @@ export function initTracking() {
   // ---- 1b. forward it onto every link that goes to the store -----------
   // URL/searchParams does the joining and the encoding, so a destination that
   // already has a query string gets & and never a second ?.
+  //
+  // /cart/add is a different shape of link and needs different handling.
+  // It adds the item and then server-redirects to a bare /cart, dropping its
+  // own query string on the way, so tags written onto it never reach Shopify -
+  // which is why subscription orders arrived unattributed. return_to says
+  // where that redirect lands, and the tags ride inside it.
+  //
+  // The /cart/{variant}:{qty} permalinks the one-time offers use open /cart
+  // directly, keep their query, and need none of this.
+  function returnToCart(u, keys) {
+    var inner = new URLSearchParams();
+    keys.forEach(function (k) { if (ATTR[k]) { inner.set(k, ATTR[k]); } });
+    var qs = inner.toString();
+    u.searchParams.set('return_to', qs ? '/cart?' + qs : '/cart');
+  }
+
   function decorate() {
     var keys = Object.keys(ATTR);
     if (!keys.length) { return; }          // no attribution: append nothing
     storeLinks().forEach(function (a) {
       var u;
       try { u = new URL(a.href, location.href); } catch (e) { return; }
-      keys.forEach(function (k) { if (ATTR[k]) { u.searchParams.set(k, ATTR[k]); } });
+      if (u.pathname.indexOf('/cart/add') === 0) {
+        // Shopify ignores the tags on this query, so they go in return_to
+        // only. id, quantity and selling_plan are left exactly as they are.
+        returnToCart(u, keys);
+      } else {
+        keys.forEach(function (k) { if (ATTR[k]) { u.searchParams.set(k, ATTR[k]); } });
+      }
       a.href = u.toString();
     });
   }
