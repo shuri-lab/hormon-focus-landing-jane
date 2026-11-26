@@ -17,6 +17,11 @@ export function initTracking() {
                     // which advertorial sent the reader here. Carried through to
                     // Shopify like any other attribution parameter.
                     'hf_presell',
+                    // the creator attribution the ads land with. Shopify needs
+                    // these to credit the sale, so they ride along exactly like
+                    // the UTMs - captured first-touch, forwarded to every
+                    // store link by decorate() below.
+                    'trybe', 'trybe_adid',
                     // kept from the original block; harmless, and still useful
                     'utm_id', 'ttclid', 's'];
 
